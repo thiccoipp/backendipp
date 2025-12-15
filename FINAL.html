@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>HUB de Atividades Torre de Expansão (GitHub Connected) | Dashboard Premium</title>
+<title>Consolida Torre | Mapeamento de Contatos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -305,6 +305,7 @@ body {
     border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.1);
     min-width: 80px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
@@ -327,7 +328,22 @@ body {
     display: flex;
     gap: 10px;
 }
+.header-logo-img {
+    height: 42px;
+    width: auto;
+    border-radius: 10px;
+    object-fit: contain;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    transition: var(--transition-normal);
+}
 
+.header-logo-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 69, 181, 0.4);
+}
 /* ===== SIDEBAR MODERNA ===== */
 .sidebar {
     width: var(--sidebar-collapsed);
@@ -439,8 +455,6 @@ body {
     transition: var(--transition-normal);
 }
 
-/* Removido o efeito de hover no sidebar que alterava o main */
-
 .main::-webkit-scrollbar {
     width: 8px;
 }
@@ -527,7 +541,7 @@ body {
 
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 16px;
 }
 
@@ -535,7 +549,7 @@ body {
     border-radius: var(--radius-lg);
     padding: 20px;
     background: var(--bg-card);
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-primary);
     display: flex;
     justify-content: space-between;
@@ -561,8 +575,8 @@ body {
 }
 
 .kpi-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     border-color: var(--brand-blue);
     background: var(--bg-card-hover);
 }
@@ -573,7 +587,7 @@ body {
 
 .kpi-card.active-filter {
     border: 1px solid var(--brand-orange);
-    box-shadow: 0 0 0 1px rgba(255, 122, 69, 0.3), var(--shadow-lg);
+    box-shadow: 0 0 0 3px rgba(255, 122, 69, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 .kpi-card.active-filter::before {
@@ -586,17 +600,24 @@ body {
     flex-direction: column;
     flex: 1;
     z-index: 1;
+    min-width: 0;
 }
 
 .kpi-val {
-    font-size: 28px;
+    font-size: clamp(20px, 3.5vw, 28px);
     font-weight: 900;
     color: var(--text-primary);
-    line-height: 1;
+    line-height: 1.2;
     margin-bottom: 8px;
     font-family: var(--font-secondary);
-    display: flex;
-    align-items: baseline;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.4em;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 .kpi-val .unit {
@@ -613,6 +634,9 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .kpi-helper {
@@ -621,6 +645,36 @@ body {
     font-weight: 400;
     line-height: 1.3;
 }
+
+/* === KPI TRENDS === */
+.kpi-trend {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    width: fit-content;
+}
+
+.kpi-trend.up {
+    background: rgba(0, 201, 167, 0.15);
+    color: var(--success-green);
+}
+
+.kpi-trend.down {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--error-red);
+}
+
+.kpi-trend.neutral {
+    background: rgba(139, 141, 158, 0.15);
+    color: var(--text-muted);
+}
+
+
 
 .kpi-icon {
     font-size: 36px;
@@ -769,6 +823,16 @@ body {
     margin-bottom: 24px;
 }
 
+.wide-chart {
+    grid-column: span 2;
+}
+
+@media (max-width: 1200px) {
+    .wide-chart {
+        grid-column: span 1;
+    }
+}
+
 .chart-container {
     position: relative;
     height: 300px;
@@ -781,14 +845,14 @@ body {
 }
 
 .chart-scroll-container {
-    max-height: 340px;
     overflow-y: auto;
-    height: 300px;
-    padding-right: 5px;
+    max-height: 500px;
+    height: auto;
+    min-height: 300px;
+    padding: 15px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-primary);
-    padding: 15px;
     flex: 1;
 }
 
@@ -1683,6 +1747,14 @@ body {
 }
 
 /* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1800px) {
+    .kpi-grid { grid-template-columns: repeat(6, 1fr); }
+}
+
+@media (max-width: 1500px) {
+    .kpi-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
 @media (max-width: 1300px) {
     .kpi-grid { grid-template-columns: repeat(4, 1fr); }
 }
@@ -1690,6 +1762,7 @@ body {
 @media (max-width: 1200px) {
     .charts-grid { grid-template-columns: 1fr; }
     .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .wide-chart { grid-column: span 1; }
 }
 
 @media (max-width: 900px) {
@@ -1775,6 +1848,322 @@ body {
 @keyframes ripple {
     to { transform: scale(4); opacity: 0; }
 }
+
+/* AJUSTES PARA LAYOUT DOS GRÁFICOS */
+@media (min-width: 1400px) {
+    .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .card:nth-child(5) {
+        grid-column: 1;
+    }
+    .card:nth-child(6) {
+        grid-column: 2;
+    }
+}
+
+/* ===== NOVOS ESTILOS PARA MELHORIAS VISUAIS ===== */
+
+/* Tooltip para Motivo Mais Tratado */
+.motivo-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    display: none;
+    width: 280px;
+    font-size: 13px;
+    backdrop-filter: blur(20px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.motivo-tooltip.show {
+    display: block;
+}
+
+.motivo-tooltip h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--brand-blue);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.motivo-tooltip p {
+    margin: 8px 0;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: flex;
+    justify-content: space-between;
+}
+
+.motivo-tooltip p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    min-width: 100px;
+}
+
+.motivo-tooltip p span {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Paleta de cores para gráficos de motivo */
+.motivo-palette {
+    --color-motivo-1: #0045B5;
+    --color-motivo-2: #FFD100;
+    --color-motivo-3: #0068FF;
+    --color-motivo-4: #00ADFF;
+    --color-motivo-5: #00266E;
+    --color-motivo-6: #FFB206;
+    --color-motivo-7: #00D9B8;
+    --color-motivo-8: #939598;
+    --color-motivo-9: #00C9A7;
+    --color-motivo-10: #FFA93D;
+    --color-motivo-11: #4CE4C9;
+    --color-motivo-12: #3D8DFF;
+    --color-motivo-13: #6CABFF;
+    --color-motivo-14: #FFE4A1;
+    --color-motivo-15: #FF9E76;
+}
+
+/* Legenda responsiva sem scroll */
+.legend-container {
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+    font-size: 0.85em;
+    min-height: 32px;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.legend-value {
+    margin-left: 8px;
+    font-weight: 600;
+    color: var(--brand-blue);
+    white-space: nowrap;
+}
+
+/* Ajustes de estabilidade para zoom */
+.chart-container,
+.bar-chart-mini-container,
+.chart-scroll-container {
+    transform-origin: 0 0;
+    transform: scale(1);
+    transition: transform 0.1s ease;
+}
+
+/* Ajustes responsivos para gráficos */
+@media (min-width: 768px) {
+    .chart-container {
+        height: 320px;
+    }
+    
+    .bar-chart-mini-container {
+        height: 220px;
+    }
+}
+
+/* Ajustes de texto responsivo */
+@media (max-width: 1400px) {
+    .kpi-val {
+        font-size: clamp(18px, 2.5vw, 24px);
+    }
+    
+    .legend-item {
+        font-size: 0.8em;
+    }
+}
+
+/* Prevenir quebra de layout em zoom */
+@media (max-resolution: 192dpi) {
+    .charts-grid {
+        gap: 20px;
+    }
+    
+    .kpi-grid {
+        gap: 12px;
+    }
+}
+
+/* Melhorias de acessibilidade em foco */
+:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 2px;
+}
+
+/* Suporte a alto contraste */
+@media (prefers-contrast: high) {
+    .kpi-card {
+        border: 2px solid var(--border-primary);
+    }
+    
+    .legend-item {
+        border: 1px solid var(--border-light);
+    }
+}
+
+/* Styles for the Motivo Details Popup */
+.motivo-info-icon {
+    font-size: 14px;
+    color: var(--brand-blue);
+    cursor: pointer;
+    margin-left: 6px;
+    opacity: 0.7;
+    transition: var(--transition-fast);
+    vertical-align: middle;
+}
+
+.motivo-info-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.motivo-details-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-primary);
+    width: 500px;
+    max-width: 90vw;
+    z-index: 3000;
+    display: none;
+    overflow: hidden;
+}
+
+.motivo-details-popup.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.motivo-details-header {
+    background: var(--brand-blue);
+    color: white;
+    padding: 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.motivo-details-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: var(--font-secondary);
+}
+
+.motivo-details-subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.motivo-details-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+}
+
+.motivo-details-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.motivo-details-content {
+    padding: 24px;
+    color: var(--text-primary);
+}
+
+.motivo-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.motivo-details-row:last-child {
+    border-bottom: none;
+}
+
+.motivo-details-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.motivo-details-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: right;
+    max-width: 60%;
+}
+
+.motivo-details-note {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(61, 141, 255, 0.05);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--text-secondary);
+    border: 1px solid rgba(61, 141, 255, 0.1);
+}
+
+.motivo-details-note i {
+    color: var(--brand-blue);
+    margin-right: 6px;
+}
 </style>
 
 <!-- IDENTIDADE VISUAL IPIRANGA -->
@@ -1802,60 +2191,57 @@ body {
 
 /* ===== CABEÇALHO - AMARELO COM TEXTO AZUL ===== */
 .header {
-  background: var(--color-amarelo) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-}
+    background: var(--color-azul) !important;
+    color: #fff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
 
-.header::before {
-  background: linear-gradient(90deg, var(--color-azul), var(--color-laranja)) !important;
+  .header::before {
+    background: linear-gradient(90deg, var(--color-amarelo), var(--color-laranja)) !important;
+
 }
 
 .header-left .header-title {
-  color: var(--color-azul) !important;
-  -webkit-text-fill-color: var(--color-azul) !important;
-  background: none !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    background: none !important;
+
 }
 
 .header-subtitle {
-  color: var(--color-azul) !important;
-  opacity: 0.8 !important;
+    color: #fff !important;
+    opacity: 0.9 !important;
 }
 
 .header-logo {
-  background: var(--color-azul) !important;
-  color: var(--color-amarelo) !important;
-  box-shadow: 0 4px 12px rgba(0, 69, 181, 0.3) !important;
-}
+    background: var(--color-amarelo) !important;
+    color: var(--color-azul) !important;
+    box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3) !important;
+  }
 
-.header-stats .stat-item {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border: 1px solid rgba(0, 69, 181, 0.2) !important;
+  .header-stats .stat-item {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 .header-stats .stat-value {
-  color: var(--color-azul) !important;
+    color: #fff !important;
 }
 
 .header-stats .stat-label {
-  color: var(--color-azul) !important;
-  opacity: 0.7 !important;
+    color: #fff !important;
+    opacity: 0.8 !important;
 }
 
 /* ===== ÍCONES E AVATAR ===== */
 .header-actions .btn {
-  color: var(--color-azul) !important;
-  background: rgba(255, 255, 255, 0.3) !important;
-  border: 1px solid rgba(0, 69, 181, 0.2) !important;
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 .header-actions .btn:hover {
   background: rgba(255, 255, 255, 0.5) !important;
-}
-
-.sb-icon {
-  color: var(--color-azul) !important;
-  background: rgba(0, 69, 181, 0.1) !important;
 }
 
 /* ===== BOTÕES PRINCIPAIS ===== */
@@ -1910,12 +2296,12 @@ body {
 .kpi-card {
   background: white !important;
   border: 1px solid var(--color-cromo) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 .kpi-card:hover {
   border-color: var(--color-azul) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
 }
 
 .kpi-card::before {
@@ -1924,6 +2310,7 @@ body {
 
 .kpi-card.active-filter {
   border-color: var(--color-laranja) !important;
+  box-shadow: 0 0 0 3px rgba(255, 105, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 .kpi-card.active-filter::before {
@@ -1950,7 +2337,7 @@ body {
 /* KPIs específicos */
 #kOpen,
 #headerOpen {
-  color: var(--color-amarelo) !important; /* Alterado de laranja para amarelo */
+  color: var(--color-amarelo) !important;
 }
 
 #kClosed,
@@ -2012,8 +2399,8 @@ body {
   --chart-color-secondary: var(--color-amarelo);
 }
 
-/* Gráfico de rosca - Distribuição por GN */
-#chartGNDistribution {
+/* Gráfico de rosca - Origem do Contato */
+#chartOrigemContato {
   --chart-color-primary: var(--color-azul);
   --chart-color-secondary: var(--color-amarelo);
 }
@@ -2021,13 +2408,7 @@ body {
 /* Gráfico de barras - Tipo de Atendimento */
 #chartTipoAtendimento {
   --chart-color-ativo: var(--color-azul);
-  --chart-color-receptivo: var(--color-amarelo); /* Alterado de laranja para amarelo */
-}
-
-/* Gráfico de rosca - Origem do Contato */
-#chartOrigemContato {
-  --chart-color-primary: var(--color-azul);
-  --chart-color-secondary: var(--color-amarelo);
+  --chart-color-receptivo: var(--color-amarelo);
 }
 
 /* Gráfico de rosca - Subclassificação */
@@ -2082,7 +2463,7 @@ body {
 }
 
 .st-aberto {
-  background: var(--color-amarelo) !important; /* Alterado de laranja para amarelo */
+  background: var(--color-amarelo) !important;
   color: var(--color-preto) !important;
 }
 
@@ -2236,22 +2617,135 @@ a:hover {
   border: 1px solid var(--color-cromo) !important;
 }
 
-/* Eixos de gráficos (via Chart.js config - precisa ser ajustado no JS, mas mantemos CSS para elementos estáticos) */
+/* Eixos de gráficos */
 .chartjs-render-monitor .chartjs-tooltip {
   background: white !important;
   border: 1px solid var(--color-cromo) !important;
   color: var(--color-preto) !important;
+}
+
+/* ===== NOVOS ESTILOS IPIRANGA ===== */
+
+/* Tooltip para Motivo Mais Tratado - Estilo Ipiranga */
+.motivo-tooltip {
+  background: white !important;
+  border: 1px solid var(--color-cromo) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.motivo-tooltip h4 {
+  color: var(--color-azul) !important;
+  border-bottom: 2px solid var(--color-amarelo) !important;
+  padding-bottom: 8px;
+}
+
+.motivo-tooltip p {
+  color: var(--color-chumbo) !important;
+}
+
+.motivo-tooltip p strong {
+  color: var(--color-azul) !important;
+}
+
+.motivo-tooltip p span {
+  color: var(--color-preto) !important;
+  font-weight: 600;
+}
+
+/* Legenda Ipiranga */
+.legend-item {
+  background: white !important;
+  border: 1px solid var(--color-cromo) !important;
+}
+
+.legend-item:hover {
+  background: var(--color-cinza-claro) !important;
+}
+
+.legend-label {
+  color: var(--color-preto) !important;
+}
+
+.legend-value {
+  color: var(--color-azul) !important;
+}
+
+/* Ícone de informação no KPI */
+.kpi-lbl .fa-circle-info {
+  color: var(--color-azul) !important;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.kpi-lbl .fa-circle-info:hover {
+  opacity: 1;
+}
+
+/* Styles for the Motivo Details Popup - Ipiranga */
+.motivo-info-icon {
+  color: var(--color-azul) !important;
+}
+
+.motivo-details-popup {
+  background: white !important;
+  border: 1px solid var(--color-cromo) !important;
+}
+
+.motivo-details-header {
+  background: var(--color-azul) !important;
+}
+
+.motivo-details-title {
+  color: white !important;
+}
+
+.motivo-details-subtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.motivo-details-close {
+  color: white !important;
+}
+
+.motivo-details-close:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.motivo-details-content {
+  background: white !important;
+  color: var(--color-preto) !important;
+}
+
+.motivo-details-label {
+  color: var(--color-chumbo) !important;
+}
+
+.motivo-details-value {
+  color: var(--color-azul) !important;
+}
+
+.motivo-details-note {
+  background: rgba(0, 69, 181, 0.05) !important;
+  border: 1px solid rgba(0, 69, 181, 0.1) !important;
+  color: var(--color-chumbo) !important;
+}
+
+.motivo-details-note i {
+  color: var(--color-azul) !important;
 }
 </style>
 </head>
 <body>
 <header class="header" role="banner" aria-label="Cabeçalho principal">
 <div class="header-left">
-<div class="header-logo" aria-label="Logo HUB de Atividades">H</div>
-<div class="header-titles">
-<div class="header-title">CONSOLIDA | TORRE</div>
-<div class="header-subtitle">Torre de Expansão • Mapeamento de Contato • </div>
-</div>
+    <img src="https://pbs.twimg.com/profile_images/1633505846981283841/KeJ1rMhg_400x400.jpg"
+         alt="Logo Consolida Torre" 
+         class="header-logo-img"
+         aria-label="Logo ConsolidaTorre">
+    <div class="header-titles">
+        <div class="header-title">CONSOLIDA | TORRE</div>
+        <div class="header-subtitle">Torre de Expansão • Mapeamento de Contato</div>
+    </div>
 </div>
 <div class="header-right">
 <div class="header-stats" aria-label="Estatísticas gerais">
@@ -2260,7 +2754,7 @@ a:hover {
 <div class="stat-label">Total Registros</div>
 </div>
 <div class="stat-item">
-<div class="stat-value" id="headerOpen" style="color:var(--color-amarelo)">0</div> <!-- Alterado para amarelo -->
+<div class="stat-value" id="headerOpen" style="color:var(--color-amarelo)">0</div>
 <div class="stat-label">Em Aberto</div>
 </div>
 <div class="stat-item">
@@ -2269,6 +2763,10 @@ a:hover {
 </div>
 </div>
 <div class="header-actions">
+<a href="https://thiccoipp.github.io/backendipp/DEMANDAS%20INTERNAS.html" class="btn" style="background-color: #FF6600; color: white; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" title="Demandas Internas" aria-label="Ir para Demandas Internas">
+<i class="fa-solid fa-clipboard-list"></i> Requisições Internas
+</a>
+
 <button onclick="toggleNotifications()" class="btn btn-purple btn-icon" title="Notificações" aria-label="Abrir notificações">
 <i class="fa-solid fa-bell"></i>
 <div class="notification-badge" id="notificationBadge" style="position: absolute; top: -5px; right: -5px; background: var(--error-red); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-weight: 800;">3</div>
@@ -2279,7 +2777,7 @@ a:hover {
 <button onclick="toggleTheme()" class="btn btn-ghost btn-icon" title="Alternar Tema" aria-label="Alternar entre tema claro e escuro">
 <i class="fa-solid fa-moon"></i>
 </button>
-<button onclick="initLoadFromGitHub()" class="btn btn-primary btn-icon" title="Recarregar Dados" aria-label="Recarregar dados do GitHub">
+<button onclick="initLoadFromGitHub()" class="btn btn-primary btn-icon" title="Recarregar Dados" aria-label="Recarregar dados da base">
 <i class="fa-solid fa-rotate"></i>
 </button>
 </div>
@@ -2289,7 +2787,7 @@ a:hover {
 <div class="layout">
 <aside class="sidebar" aria-label="Filtros e ranking de analistas">
 <div class="sb-icons">
-<i class="fa-brands fa-github sb-icon" aria-hidden="true"></i>
+<i class="fa-solid fa-database sb-icon" aria-hidden="true"></i>
 <i class="fa-solid fa-filter sb-icon" aria-hidden="true"></i>
 <i class="fa-solid fa-trophy sb-icon" aria-hidden="true"></i>
 <i class="fa-solid fa-chart-line sb-icon" aria-hidden="true"></i>
@@ -2299,10 +2797,10 @@ a:hover {
 <div class="section-title">Fonte de Dados</div>
 <div id="connectionStatus" style="border:1px solid rgba(61, 141, 255, 0.3); background: rgba(61, 141, 255, 0.1); border-radius:var(--radius-sm); padding:18px; text-align:center; box-shadow: var(--shadow-sm); backdrop-filter: blur(10px);">
 <div style="font-size:13px; font-weight:700; color:var(--brand-blue); margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:8px;">
-<i class="fa-brands fa-github"></i> Conexão GitHub Ativa
+<i class="fa-solid fa-database"></i> Conexão Ativa
 </div>
 <div style="font-size:11px; color:var(--brand-blue); margin-bottom:12px; font-weight:500;">
-Base: <strong>base_hub_github.xlsx</strong>
+Base Remota Carregada
 </div>
 <button id="refreshBtn" class="btn btn-secondary" style="width:100%; justify-content:center; padding:10px; font-size:12px;">
 <i class="fa-solid fa-sync"></i> Recarregar Dados
@@ -2344,11 +2842,6 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="select-wrapper">
 <select id="subSelect" class="form-control" aria-label="Filtro de subclassificação">
 <option value="">Todas Subclasses</option>
-</select>
-</div>
-<div class="select-wrapper">
-<select id="gnSelect" class="form-control" aria-label="Filtro de GN">
-<option value="">Todas GN</option>
 </select>
 </div>
 <div class="select-wrapper">
@@ -2401,14 +2894,16 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="kpi-content">
 <div class="kpi-val" id="kTotal">0</div>
 <div class="kpi-lbl">Total de registros</div>
+
 <div class="kpi-helper" id="kTotalHelper">Clique para limpar todos os filtros</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-layer-group"></i></div>
 </div>
 <div class="kpi-card slide-in-left" id="kpiOpen" data-filter="Aberto" style="animation-delay: 0.2s">
 <div class="kpi-content">
-<div class="kpi-val" id="kOpen" style="color:var(--color-amarelo)">0</div> <!-- Alterado para amarelo -->
+<div class="kpi-val" id="kOpen" style="color:var(--color-amarelo)">0</div>
 <div class="kpi-lbl">Em aberto</div>
+<div class="kpi-trend neutral" id="kOpenTrend"><span>0%</span></div>
 <div class="kpi-helper" id="kOpenHelper">Clique para filtrar/desfiltrar por status "Em Aberto"</div>
 </div>
 <div class="kpi-icon"><i class="fa-regular fa-clock"></i></div>
@@ -2417,6 +2912,7 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="kpi-content">
 <div class="kpi-val" id="kClosed" style="color:var(--color-aqua)">0</div>
 <div class="kpi-lbl">Concluídos</div>
+<div class="kpi-trend neutral" id="kClosedTrend"><span>0%</span></div>
 <div class="kpi-helper" id="kClosedHelper">Clique para filtrar/desfiltrar por status "Concluído"</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-check-circle"></i></div>
@@ -2425,6 +2921,7 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="kpi-content">
 <div class="kpi-val" id="kFCR">0%</div>
 <div class="kpi-lbl">FCR (Resolução 1ª)</div>
+<div class="kpi-trend neutral" id="kFCRTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 80%</span></div>
 <div class="kpi-helper" id="kFCRHelper">Clique para filtrar/desfiltrar por FCR = Sim</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
@@ -2433,10 +2930,34 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="kpi-content">
 <div class="kpi-val" id="kAvgTime">0h</div>
 <div class="kpi-lbl">Tempo Médio Resolução</div>
+<div class="kpi-trend neutral" id="kAvgTimeTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 24h</span></div>
 <div class="kpi-helper" id="kAvgTimeHelper">Baseado apenas nos casos concluídos</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
 </div>
+
+<!-- NOVO CARD: CNPJ ÚNICOS NO PERÍODO -->
+<div class="kpi-card slide-in-left" id="kpiCnpjCount" style="animation-delay: 0.6s">
+<div class="kpi-content">
+<div class="kpi-val" id="kCnpjCount">0</div>
+<div class="kpi-lbl">CNPJ Únicos</div>
+<div class="kpi-trend neutral" id="kCnpjTrend"><i class="fa-solid fa-chart-simple"></i> <span>--</span></div>
+<div class="kpi-helper">Quantidade de CNPJ distintos no período</div>
+</div>
+<div class="kpi-icon"><i class="fa-solid fa-building"></i></div>
+</div>
+
+<!-- NOVO CARD: MOTIVO MAIS TRATADO -->
+<div class="kpi-card slide-in-left" id="kpiTopMotivo" style="animation-delay: 0.7s">
+<div class="kpi-content">
+<div class="kpi-val" id="kTopMotivo" title="">-</div>
+<div class="kpi-lbl">Motivo Mais Tratado <i class="fa-solid fa-circle-info motivo-info-icon" onclick="showMotivoDetailsPopup(event)"></i></div>
+<div class="kpi-trend neutral" id="kMotivoTrend"><i class="fa-solid fa-percent"></i> <span>--</span></div>
+<div class="kpi-helper">Tema com maior volume</div>
+</div>
+<div class="kpi-icon"><i class="fa-solid fa-chart-bar"></i></div>
+</div>
+
 </div>
 </div>
 
@@ -2459,38 +2980,6 @@ Base: <strong>base_hub_github.xlsx</strong>
 <div class="card fade-in" style="animation-delay: 0.3s">
 <div class="card-header-row">
 <div>
-<h3 class="card-title"><i class="fa-solid fa-chart-pie" style="color:var(--brand-orange)"></i> Distribuição de Atendimentos por GN</h3>
-<div class="card-subtitle">Percentual de ocorrências por Gerência de Negócio</div>
-</div>
-<button onclick="downloadChart('chartGNDistribution', 'distribuicao-gn.png')" class="btn btn-ghost" style="padding:6px 12px; font-size:11px;">
-<i class="fa-solid fa-download"></i> Exportar
-</button>
-</div>
-<div style="display:flex; height:300px; align-items:center;">
-<div style="flex:1; position:relative;">
-<canvas id="chartGNDistribution" role="img" aria-label="Gráfico de rosca com distribuição de atendimentos por GN"></canvas>
-<div class="doughnut-center-info" id="chartGNCenter">
-<div class="doughnut-center-name">Total GN</div>
-<div class="doughnut-center-value">0</div>
-</div>
-</div>
-<div id="legendGN" style="width:200px; padding-left:15px; overflow-y:auto; max-height:100%;">
-<div style="font-size:13px; font-weight:600; color:var(--brand-blue); margin-bottom:10px; padding-bottom:5px; border-bottom:2px solid var(--border-primary);">
-<i class="fa-solid fa-list"></i> Legenda GN
-</div>
-<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">
-Carregando dados...
-</div>
-</div>
-</div>
-<div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:10px; font-weight:500;">
-<i class="fa-solid fa-mouse-pointer"></i> Clique em uma fatia para filtrar/desfiltrar por GN
-</div>
-</div>
-
-<div class="card fade-in" style="animation-delay: 0.4s">
-<div class="card-header-row">
-<div>
 <h3 class="card-title"><i class="fa-solid fa-headset" style="color:var(--brand-blue)"></i> Tipo de Atendimento</h3>
 <div class="card-subtitle">Distribuição entre contatos Ativos e Receptivos</div>
 </div>
@@ -2504,7 +2993,7 @@ Carregando dados...
 <span style="color:var(--text-secondary)">Ativo</span>
 </div>
 <div style="display:flex; align-items:center; gap:6px; font-size:11px;">
-<div style="width:12px; height:12px; background:var(--color-amarelo); border-radius:2px;"></div> <!-- Alterado para amarelo -->
+<div style="width:12px; height:12px; background:var(--color-amarelo); border-radius:2px;"></div>
 <span style="color:var(--text-secondary)">Receptivo</span>
 </div>
 </div>
@@ -2516,7 +3005,7 @@ Carregando dados...
 <div class="card fade-in" style="animation-delay: 0.45s">
 <div class="card-header-row">
 <div>
-<h3 class="card-title"><i class="fa-solid fa-comments" style="color:var(--success-green)"></i> Origem do Contato</h3>
+<h3 class="card-title"><i class="fa-solid fa-comments" style="color:var(--success-green)"></i> Canais de Contato</h3>
 <div class="card-subtitle">Distribuição dos canais de comunicação</div>
 </div>
 <button onclick="downloadChart('chartOrigemContato', 'origem-contato.png')" class="btn btn-ghost" style="padding:6px 12px; font-size:11px;">
@@ -2531,14 +3020,7 @@ Carregando dados...
 <div class="doughnut-center-value">0</div>
 </div>
 </div>
-<div id="legendOrigemContato" style="width:180px; padding-left:15px; overflow-y:auto; max-height:100%;">
-<div style="font-size:13px; font-weight:600; color:var(--brand-blue); margin-bottom:10px; padding-bottom:5px; border-bottom:2px solid var(--border-primary);">
-<i class="fa-solid fa-list"></i> Legenda
-</div>
-<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:20px;">
-Carregando dados...
-</div>
-</div>
+<div id="legendOrigemContato" class="legend-container"></div>
 </div>
 <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:10px; font-weight:500;">
 <i class="fa-solid fa-mouse-pointer"></i> Clique em uma fatia para filtrar/desfiltrar por origem
@@ -2548,22 +3030,21 @@ Carregando dados...
 <div class="card fade-in" style="animation-delay: 0.5s">
 <div class="card-header-row">
 <div>
-<h3 class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--brand-blue)"></i> Subclassificação</h3>
-<div class="card-subtitle">Distribuição dos atendimentos por subclasse</div>
+<h3 class="card-title"><i class="fa-solid fa-map" style="color:var(--brand-orange)"></i> Atendimentos por GN</h3>
+<div class="card-subtitle">Distribuição por Gerência Nacional</div>
 </div>
 </div>
 <div style="display:flex; height:300px; align-items:center;">
 <div style="flex:1; position:relative;">
-<canvas id="chartSubclassificacao" role="img" aria-label="Gráfico de rosca por subclassificação"></canvas>
-<div class="doughnut-center-info" id="chartSubclassificacaoCenter"></div>
+<canvas id="chartGN" role="img" aria-label="Gráfico de rosca por GN"></canvas>
+<div class="doughnut-center-info" id="chartGNCenter"></div>
 </div>
-<div id="legendSubclassificacao" style="width:180px; padding-left:15px; overflow-y:auto; max-height:100%;"></div>
-</div>
+<div id="legendGN" class="legend-container"></div>
 </div>
 </div>
 
-<div class="charts-grid">
-<div class="card fade-in" style="animation-delay: 0.6s">
+<!-- MOVENDO EVOLUÇÃO DIÁRIA PARA AQUI -->
+<div class="card fade-in" style="animation-delay: 0.55s">
 <div class="card-header-row">
 <div>
 <h3 class="card-title"><i class="fa-solid fa-chart-line" style="color:var(--brand-blue)"></i> Evolução Diária</h3>
@@ -2588,7 +3069,25 @@ Carregando dados...
 </div>
 </div>
 
-<div class="card fade-in" style="animation-delay: 0.7s">
+<div class="card fade-in" style="animation-delay: 0.6s">
+<div class="card-header-row">
+<div>
+<h3 class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--brand-blue)"></i> Subclassificação</h3>
+<div class="card-subtitle">Distribuição dos atendimentos por subclasse</div>
+</div>
+</div>
+<div style="display:flex; height:300px; align-items:center;">
+<div style="flex:1; position:relative;">
+<canvas id="chartSubclassificacao" role="img" aria-label="Gráfico de rosca por subclassificação"></canvas>
+<div class="doughnut-center-info" id="chartSubclassificacaoCenter"></div>
+</div>
+<div id="legendSubclassificacao" class="legend-container"></div>
+</div>
+</div>
+</div>
+
+<div class="charts-grid">
+<div class="card fade-in wide-chart" style="animation-delay: 0.7s">
 <div class="card-header-row">
 <div>
 <h3 class="card-title"><i class="fa-solid fa-folder-open" style="color:var(--brand-orange)"></i> Distribuição por Motivo</h3>
@@ -2634,7 +3133,6 @@ Carregando dados...
 <th data-key="tempoResolucaoDias">Tempo Resolução <span class="sort-indicator"></span></th>
 <th data-key="fcr">FCR <span class="sort-indicator"></span></th>
 <th data-key="analista">Analista <span class="sort-indicator"></span></th>
-<th data-key="gn">GN <span class="sort-indicator"></span></th>
 <th data-key="motivo">Motivo <span class="sort-indicator"></span></th>
 <th data-key="sub">Sub Classificação <span class="sort-indicator"></span></th>
 <th data-key="solicitante">Razão Social <span class="sort-indicator"></span></th>
@@ -2644,7 +3142,7 @@ Carregando dados...
 </thead>
 <tbody>
 <tr>
-<td colspan="12" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:500;">
+<td colspan="11" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:500;">
 <i class="fa-solid fa-spinner fa-spin" style="margin-right:10px;"></i>
 Aguardando dados...
 </td>
@@ -2653,7 +3151,10 @@ Aguardando dados...
 </table>
 </div>
 <div style="text-align:center; margin-top:15px;">
-<div style="font-size:12px; color:var(--text-secondary); display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(61,141,255,0.1); border-radius:8px; border:1px solid rgba(61,141,255,0.2);">
+    <div onclick="showDevelopmentPopup()" style="cursor:pointer; font-size:12px; color:var(--text-secondary); display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(61,141,255,0.1); border-radius:8px; border:1px solid rgba(61,141,255,0.2); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(61,141,255,0.2)'" onmouseout="this.style.background='rgba(61,141,255,0.1)'">
+        <i class="fa-solid fa-info-circle" style="color:var(--brand-blue)"></i>
+        <span>Use <kbd style="background:var(--gradient-primary); color:white; padding:2px 8px; border-radius:4px; font-weight:600;">F</kbd> para focar na busca rápida (Clique para ajuda)</span>
+    </div>
 <i class="fa-solid fa-info-circle" style="color:var(--brand-blue)"></i>
 <span>Use <kbd style="background:var(--gradient-primary); color:white; padding:2px 8px; border-radius:4px; font-weight:600;">F</kbd> para focar na busca rápida</span>
 </div>
@@ -2665,8 +3166,6 @@ Aguardando dados...
 <div>Dashboard desenvolvido por <strong>Thiago Jr</strong></div>
 <div>•</div>
 <div>Última atualização: <span id="lastUpdateTime">--:--</span></div>
-<div>•</div>
-<div><i class="fa-brands fa-github"></i> <a href="https://github.com/thiccoipp/Ipp" style="color:var(--brand-blue); text-decoration:none; font-weight:500;" target="_blank" aria-label="Repositório GitHub">Repositório GitHub</a></div>
 </div>
 </div>
 </main>
@@ -3011,10 +3510,50 @@ Em breve você poderá aproveitar todos os recursos planejados.
     </div>
 </div>
 
+<!-- NOVO POPUP DE DETALHES DO MOTIVO -->
+<div class="motivo-details-popup" id="motivoDetailsPopup" role="dialog" aria-label="Detalhes do motivo mais tratado" aria-hidden="true">
+    <div class="motivo-details-header">
+        <div class="motivo-details-title">Detalhes de Tempo por Motivo</div>
+        <div class="motivo-details-subtitle">Assunto mais rápido e mais demorado</div>
+        <button class="motivo-details-close" onclick="hideMotivoDetailsPopup()" aria-label="Fechar diálogo">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+    <div class="motivo-details-content">
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Motivo Mais Tratado:</div>
+            <div class="motivo-details-value" id="detailMotivoMaisTratado">-</div>
+        </div>
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Quantidade:</div>
+            <div class="motivo-details-value" id="detailQuantidade">-</div>
+        </div>
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Assunto Mais Rápido:</div>
+            <div class="motivo-details-value" id="detailMaisRapido">-</div>
+        </div>
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Tempo Médio (Mais Rápido):</div>
+            <div class="motivo-details-value" id="detailTempoMaisRapido">-</div>
+        </div>
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Assunto Mais Demorado:</div>
+            <div class="motivo-details-value" id="detailMaisDemorado">-</div>
+        </div>
+        <div class="motivo-details-row">
+            <div class="motivo-details-label">Tempo Médio (Mais Demorado):</div>
+            <div class="motivo-details-value" id="detailTempoMaisDemorado">-</div>
+        </div>
+        <div class="motivo-details-note">
+            <i class="fa-solid fa-info-circle"></i> Nota: Os tempos são calculados com base na média de resolução por motivo (apenas casos concluídos).
+        </div>
+    </div>
+</div>
+
 <div id="loading">
 <div class="loading-content">
 <div class="loading-spinner"></div>
-<div class="loading-text" id="loadingText">Conectando ao GitHub...</div>
+<div class="loading-text" id="loadingText">Conectando à base de dados...</div>
 <div class="loading-subtext">Baixando e processando dados da planilha</div>
 <div style="margin-top:20px; width:100%; height:6px; background:rgba(61, 141, 255, 0.1); border-radius:3px; overflow:hidden;">
 <div id="loadingProgress" style="width:0%; height:100%; background:var(--gradient-primary); transition:width 0.3s;"></div>
@@ -3026,9 +3565,29 @@ Em breve você poderá aproveitar todos os recursos planejados.
 /* ===== JAVASCRIPT PRINCIPAL ===== */
 Chart.register(ChartDataLabels);
 
-const DATA_URL = "https://backendipp.onrender.com/api/data";
 
-// Nova paleta diversificada e bem distribuída
+const DATA_URL = "https://raw.githubusercontent.com/thiccoipp/Ipp/main/base_hub_github.xlsx";
+
+
+// Paleta de cores para gráficos de motivo (sem vermelho e roxo)
+const MOTIVO_PALETTE = [
+  '#0045B5', // Azul Ipiranga
+  '#FFD100', // Amarelo Ipiranga
+  '#0068FF', // Índigo
+  '#00ADFF', // Céu
+  '#00266E', // Marinho
+  '#FFB206', // Canário
+  '#00D9B8', // Aqua
+  '#939598', // Asfalto
+  '#00C9A7', // Verde sucesso
+  '#FFA93D', // Laranja claro
+  '#4CE4C9', // Verde claro
+  '#3D8DFF', // Azul claro
+  '#6CABFF', // Azul mais claro
+  '#FFE4A1', // Amarelo claro
+  '#FF9E76'  // Laranja suave
+];
+
 const GN_PALETTE = [
   '#0045B5', // Azul Ipiranga
   '#FFD100', // Amarelo Ipiranga
@@ -3072,11 +3631,13 @@ let CHART_FILTERS = {
     'Doughnut Selection': {},
     'Motivo': null,
     'Analista': null,
-    'GN': null,
     'Subclassificação': null,
     'TipoContato': null,
     'AvgTime': null,
-    'Origem': null
+    'Origem': null,
+    'GN': null,
+    'CnpjCount': null,
+    'TopMotivo': null
 };
 
 let CURRENT_SORT = { key: 'dtStart', direction: 'desc' };
@@ -3085,6 +3646,7 @@ let LAST_UPDATE_TIME = null;
 let charts = {};
 let loadingProgressInterval = null;
 let notificationCount = 3;
+let firstLoad = true;
 
 // ===== NOVAS VARIÁVEIS PARA ANÁLISE POR MOTIVO =====
 let motivoAnalyticsData = null;
@@ -3093,6 +3655,122 @@ let motivoCharts = {};
 
 const $ = id => document.getElementById(id);
 
+// ===== FUNÇÃO DE FORMATAÇÃO DE CNPJ =====
+function formatCNPJ(cnpj) {
+    const digits = cnpj.replace(/\D/g, '');
+    if (digits.length !== 14) return cnpj;
+    return digits.replace(
+        /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+        '$1.$2.$3/$4-$5'
+    );
+}
+
+// ===== FUNÇÃO PARA CALCULAR CONTRASTE =====
+function getContrastColor(hexColor) {
+    let r, g, b;
+    if (hexColor.startsWith('rgb')) {
+        const rgb = hexColor.match(/\d+/g);
+        r = parseInt(rgb[0]);
+        g = parseInt(rgb[1]);
+        b = parseInt(rgb[2]);
+    } else {
+        const hex = hexColor.replace('#', '');
+        r = parseInt(hex.substr(0, 2), 16);
+        g = parseInt(hex.substr(2, 2), 16);
+        b = parseInt(hex.substr(4, 2), 16);
+    }
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+}
+
+// ===== FUNÇÃO PARA TRATAR GN =====
+function tratarGN(gn) {
+    if (!gn) return 'Não Informado';
+    let gnTratada = gn.toString().trim();
+    gnTratada = gnTratada.replace(/G\.N\.\s*Urbano\s*/i, "Urb ");
+    gnTratada = gnTratada.replace(/G\.N\.\s*Rodovia\s*/i, "Rod. ");
+    gnTratada = gnTratada.replace(/G\.N\.\s*/i, "");
+    return gnTratada || gn;
+}
+
+// ===== FUNÇÕES PARA MOTIVO DETAILS POPUP =====
+function showMotivoDetailsPopup(event) { 
+    event.stopPropagation(); // Prevents the icon click from triggering the KPI filter 
+    
+    // Calculate average times per reason (only for closed cases) 
+    const motivoTempos = {}; 
+    FILTERED.forEach(item => { 
+        if (item.statusNorm === 'Fechado' && item.tempoResolucaoHoras !== null) { 
+            const motivo = item.motivo || 'Não informado'; 
+            if (!motivoTempos[motivo]) { 
+                motivoTempos[motivo] = { 
+                    total: 0, 
+                    count: 0, 
+                    avg: 0 
+                }; 
+            } 
+            motivoTempos[motivo].total += item.tempoResolucaoHoras; 
+            motivoTempos[motivo].count++; 
+        } 
+    }); 
+    
+    // Calculate the averages 
+    Object.keys(motivoTempos).forEach(motivo => { 
+        motivoTempos[motivo].avg = motivoTempos[motivo].total / motivoTempos[motivo].count; 
+    }); 
+    
+    // Find the fastest and slowest 
+    let maisRapido = { motivo: '-', tempo: Infinity }; 
+    let maisDemorado = { motivo: '-', tempo: -Infinity }; 
+    
+    const motivosComTempo = Object.entries(motivoTempos); 
+    if (motivosComTempo.length > 0) { 
+        maisRapido = motivosComTempo.reduce((min, [motivo, data]) => { 
+            return data.avg < min.tempo ? { motivo, tempo: data.avg } : min; 
+        }, { motivo: '', tempo: Infinity }); 
+        
+        maisDemorado = motivosComTempo.reduce((max, [motivo, data]) => { 
+            return data.avg > max.tempo ? { motivo, tempo: data.avg } : max; 
+        }, { motivo: '', tempo: -Infinity }); 
+    } 
+    
+    // Get the current most treated reason 
+    const motivoCounts = {}; 
+    FILTERED.forEach(item => { 
+        const motivo = item.motivo || 'Não informado'; 
+        motivoCounts[motivo] = (motivoCounts[motivo] || 0) + 1; 
+    }); 
+    
+    let topMotivo = '-'; 
+    let topMotivoCount = 0; 
+    if (Object.keys(motivoCounts).length > 0) { 
+        const entries = Object.entries(motivoCounts); 
+        entries.forEach(([motivo, count]) => { 
+            if (count > topMotivoCount) { 
+                topMotivoCount = count; 
+                topMotivo = motivo; 
+            } 
+        }); 
+    } 
+    
+    // Populate the popup 
+    $('detailMotivoMaisTratado').innerText = topMotivo; 
+    $('detailQuantidade').innerText = topMotivoCount; 
+    $('detailMaisRapido').innerText = maisRapido.motivo; 
+    $('detailTempoMaisRapido').innerText = maisRapido.tempo !== Infinity ? maisRapido.tempo.toFixed(1) + ' horas' : '-'; 
+    $('detailMaisDemorado').innerText = maisDemorado.motivo; 
+    $('detailTempoMaisDemorado').innerText = maisDemorado.tempo !== -Infinity ? maisDemorado.tempo.toFixed(1) + ' horas' : '-'; 
+    
+    // Show the popup 
+    const popup = $('motivoDetailsPopup'); 
+    popup.classList.add('show'); 
+} 
+
+function hideMotivoDetailsPopup() { 
+    $('motivoDetailsPopup').classList.remove('show'); 
+}
+
+// ===== INICIALIZAÇÃO =====
 window.onload = function() {
     document.querySelectorAll('.btn').forEach(button => button.addEventListener('click', addRippleEffect));
     if (localStorage.getItem('dashboard-theme') === 'light') document.body.classList.add('light-theme');
@@ -3108,7 +3786,6 @@ function setupListeners() {
     $('qSearch').addEventListener('input', () => { CURRENT_PAGE=1; applyAllFilters(); });
     $('motivoSelect').addEventListener('change', applyAllFilters);
     $('analistaSelect').addEventListener('change', applyAllFilters);
-    $('gnSelect').addEventListener('change', applyAllFilters);
     $('subSelect').addEventListener('change', applyAllFilters);
     $('tipoContatoSelect').addEventListener('change', applyAllFilters);
     $('datePreset').addEventListener('change', handleDatePreset);
@@ -3121,6 +3798,8 @@ function setupListeners() {
     $('kpiClosed').addEventListener('click', () => filterByKPI('Fechado'));
     $('kpiFCR').addEventListener('click', () => filterByKPI('FCR'));
     $('kpiAvgTime').addEventListener('click', () => filterByKPI('AvgTime'));
+    $('kpiCnpjCount').addEventListener('click', () => filterByKPI('CnpjCount'));
+    $('kpiTopMotivo').addEventListener('click', () => filterByKPI('TopMotivo'));
     
     document.addEventListener('click', function(e) {
         if (e.target.matches('#dataTable th[data-key]') || e.target.closest('#dataTable th[data-key]')) {
@@ -3142,6 +3821,7 @@ function setupListeners() {
         if (e.key === 'Escape') {
             hideDevelopmentPopup();
             hideAutomationModal();
+            hideMotivoDetailsPopup();
             const notificationPopup = $('notificationPopup');
             if (notificationPopup.classList.contains('show')) {
                 toggleNotifications();
@@ -3153,6 +3833,7 @@ function setupListeners() {
         const notificationPopup = $('notificationPopup');
         const developmentPopup = $('developmentPopup');
         const automationPopup = $('automationPopup');
+        const motivoDetailsPopup = $('motivoDetailsPopup');
         
         if (notificationPopup.classList.contains('show') &&
             !notificationPopup.contains(e.target) &&
@@ -3171,6 +3852,12 @@ function setupListeners() {
             !e.target.closest('.btn-automation')) {
             hideAutomationModal();
         }
+        
+        if (motivoDetailsPopup && motivoDetailsPopup.classList.contains('show') &&
+            !motivoDetailsPopup.contains(e.target) &&
+            !e.target.closest('.motivo-info-icon')) {
+            hideMotivoDetailsPopup();
+        }
     });
     
     // Event listener para busca na tabela de motivos
@@ -3182,6 +3869,32 @@ function setupListeners() {
             }
         });
     }
+    
+    // Ajustar tamanho de fonte em zoom
+    let lastZoom = 100;
+    window.addEventListener('resize', function() {
+        const zoom = Math.round((window.outerWidth / window.innerWidth) * 100);
+        if (Math.abs(zoom - lastZoom) > 5) {
+            lastZoom = zoom;
+            adjustZoomStyles(zoom);
+        }
+    });
+}
+
+// ===== FUNÇÃO PARA AJUSTAR ESTILOS EM ZOOM =====
+function adjustZoomStyles(zoomLevel) {
+    const fontSize = Math.max(10, 12 * (zoomLevel / 100));
+    document.documentElement.style.setProperty('--zoom-factor', zoomLevel / 100);
+    
+    // Ajustar legendas
+    document.querySelectorAll('.legend-container').forEach(legend => {
+        legend.style.fontSize = `${Math.max(0.7, 0.9 * (zoomLevel / 100))}em`;
+    });
+    
+    // Ajustar KPIs
+    document.querySelectorAll('.kpi-val').forEach(kpi => {
+        kpi.style.fontSize = `clamp(16px, ${2.5 * (zoomLevel / 100)}vw, 28px)`;
+    });
 }
 
 // ===== FUNÇÕES PRINCIPAIS EXISTENTES =====
@@ -3205,7 +3918,6 @@ function showAutomationModal() {
     const popup = $('automationPopup');
     popup.classList.add('show');
     
-    // Carregar dados quando o modal abrir
     loadMotivoAnalytics();
     
     setTimeout(() => {
@@ -3277,7 +3989,7 @@ function updateNotificationBadge(count) {
 }
 
 async function initLoadFromGitHub() {
-    showLoading(true, "Conectando ao GitHub...");
+    showLoading(true, "Conectando à base de dados...");
     resetLoadingProgress();
     
     try {
@@ -3370,10 +4082,6 @@ function processExcelData(arrayBuffer) {
                 tempoResolucaoFormatado = tempoResolucaoHoras < 24 ? `${Math.round(tempoResolucaoHoras)}h` : `${tempoResolucaoDias.toFixed(1)} dias`;
             }
             
-            let gn = row["GN"] || "Não Informado";
-            gn = gn.toString().trim();
-            if (!gn || gn === "") gn = "Não Informado";
-            
             let tipoContato = String(row["Tipo de contato"] || "").trim();
             if (!tipoContato || tipoContato === "") tipoContato = "Não Informado";
             if (tipoContato.toLowerCase().includes("ativo")) tipoContato = "Ativo";
@@ -3381,6 +4089,27 @@ function processExcelData(arrayBuffer) {
             
             let origemContato = row["Origem do contato"] || "Não Informado";
             origemContato = origemContato.toString().trim();
+            
+            let cnpjRawDigits = String(row["CNPJ"] || "").replace(/[^0-9]/g, "");
+            let cnpjFormatted = cnpjRawDigits;
+            
+            if (cnpjFormatted.length === 14) {
+                cnpjFormatted = formatCNPJ(cnpjFormatted);
+            } else if (cnpjFormatted.length === 13) {
+                cnpjFormatted = '0' + cnpjFormatted;
+                cnpjFormatted = formatCNPJ(cnpjFormatted);
+            } else if (cnpjFormatted.length > 14) {
+                cnpjFormatted = formatCNPJ(cnpjFormatted.substring(0, 14));
+            } else {
+                cnpjFormatted = "Não Informado";
+                cnpjRawDigits = "";
+            }
+            
+            let razaoSocial = String(row["Razão Social"] || "").trim();
+            if (razaoSocial === "") razaoSocial = "Não Informada";
+            
+            let gn = row["GN"] || "";
+            let gnTratada = tratarGN(gn);
             
             return {
                 uid: index,
@@ -3390,18 +4119,19 @@ function processExcelData(arrayBuffer) {
                 dtEnd: dataFimObj,
                 fcr: fcrValue,
                 analista: row["Analista"] || "Não Atribuído",
-                gn: gn,
                 motivo: row["Motivo"] || "Outros",
                 sub: row["Sub Classificação"] || "Geral",
-                solicitante: row["Razão Social"] || row["CNPJ"] || "",
+                solicitante: razaoSocial,
                 descricao: row["Descrição"] || "",
-                cnpj: row["CNPJ"] || "",
+                cnpj: cnpjRawDigits || "Não Informado",
+                cnpjFormatted: cnpjFormatted,
                 tipoContato: tipoContato,
                 origemContato: origemContato,
                 tempoResolucao,
                 tempoResolucaoDias,
                 tempoResolucaoHoras,
-                tempoResolucaoFormatado
+                tempoResolucaoFormatado,
+                gn: gnTratada
             };
         });
         
@@ -3411,6 +4141,12 @@ function processExcelData(arrayBuffer) {
         
         populateFilters();
         applyAllFilters();
+        
+        if (firstLoad) {
+            $('datePreset').value = 'currentMonth';
+            handleDatePreset();
+            firstLoad = false;
+        }
         
         setTimeout(() => {
             showLoading(false);
@@ -3445,7 +4181,6 @@ function populateFilters() {
     fillSelect('motivoSelect', unique('motivo'), 'Todos Motivos');
     fillSelect('analistaSelect', unique('analista'), 'Todos Analistas');
     fillSelect('subSelect', unique('sub'), 'Todas Subclasses');
-    fillSelect('gnSelect', unique('gn'), 'Todas GN');
     fillSelect('tipoContatoSelect', unique('tipoContato'), 'Todos Tipos');
 }
 
@@ -3454,21 +4189,20 @@ function applyAllFilters() {
     const fMotivo = $('motivoSelect').value;
     const fAnalista = $('analistaSelect').value;
     const fSub = $('subSelect').value;
-    const fGN = $('gnSelect').value;
     const fTipoContato = $('tipoContatoSelect').value;
     const fOrigem = CHART_FILTERS['Origem'];
+    const fGN = CHART_FILTERS['GN'];
+    const fCnpjCount = CHART_FILTERS['CnpjCount'];
+    const fTopMotivo = CHART_FILTERS['TopMotivo'];
     
     let dStart = $('dateStart').value ? new Date($('dateStart').value) : null;
     let dEnd = $('dateEnd').value ? new Date($('dateEnd').value) : null;
     
-    // CORREÇÃO: Se houver filtro de data do gráfico, sobrepõe mas mantém formato correto
     if (CHART_FILTERS['Evo Date']) {
         const filterDate = new Date(CHART_FILTERS['Evo Date']);
-        // Criar data de início e fim para o dia completo
         dStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate(), 0, 0, 0);
         dEnd = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate(), 23, 59, 59);
     } else if (dEnd) {
-        // Apenas ajusta hora para filtros normais
         dEnd.setHours(23,59,59);
     }
     
@@ -3478,14 +4212,17 @@ function applyAllFilters() {
             (item.solicitante && item.solicitante.toLowerCase().includes(q)) ||
             (item.motivo && item.motivo.toLowerCase().includes(q)) ||
             (item.cnpj && item.cnpj.toString().includes(q)) ||
+            (item.cnpjFormatted && item.cnpjFormatted.toLowerCase().includes(q)) ||
             (item.gn && item.gn.toLowerCase().includes(q));
         
         const motivoMatch = !fMotivo || item.motivo === fMotivo;
         const analistaMatch = !fAnalista || item.analista === fAnalista;
         const subMatch = !fSub || item.sub === fSub;
-        const gnMatch = !fGN || item.gn === fGN;
         const tipoContatoMatch = !fTipoContato || item.tipoContato === fTipoContato;
         const origemMatch = !fOrigem || item.origemContato === fOrigem;
+        const gnMatch = !fGN || item.gn === fGN;
+        const cnpjCountMatch = !fCnpjCount || (item.cnpj && item.cnpj.trim() !== '');
+        const topMotivoMatch = !fTopMotivo || item.motivo === fTopMotivo;
         
         let dateMatch = true;
         if (dStart || dEnd) {
@@ -3506,10 +4243,8 @@ function applyAllFilters() {
         
         const chartAnalistaMatch = !CHART_FILTERS['Doughnut Selection']['Analista'] || item.analista === CHART_FILTERS['Doughnut Selection']['Analista'];
         
-        const chartGNMatch = !CHART_FILTERS['Doughnut Selection']['GN'] || item.gn === CHART_FILTERS['Doughnut Selection']['GN'];
-        
-        return textMatch && motivoMatch && analistaMatch && subMatch && gnMatch && tipoContatoMatch && origemMatch && dateMatch &&
-            kpiStatusMatch && kpiFcrMatch && kpiAvgTimeMatch && chartAnalistaMatch && chartGNMatch;
+        return textMatch && motivoMatch && analistaMatch && subMatch && tipoContatoMatch && origemMatch && dateMatch &&
+            kpiStatusMatch && kpiFcrMatch && kpiAvgTimeMatch && chartAnalistaMatch && gnMatch && cnpjCountMatch && topMotivoMatch;
     });
     
     renderKPIs();
@@ -3541,11 +4276,50 @@ function renderKPIs() {
         }
     }
     
+    // CNPJ únicos
+    const cnpjSet = new Set();
+    FILTERED.forEach(item => {
+        if (item.cnpj && item.cnpj.trim() !== '') {
+            cnpjSet.add(item.cnpj.trim());
+        }
+    });
+    const cnpjCount = cnpjSet.size;
+    
+    // Motivo mais tratado
+    const motivoCounts = {};
+    FILTERED.forEach(item => {
+        const motivo = item.motivo || 'Não informado';
+        motivoCounts[motivo] = (motivoCounts[motivo] || 0) + 1;
+    });
+    let topMotivo = '-';
+    let topMotivoCount = 0;
+    if (Object.keys(motivoCounts).length > 0) {
+        const entries = Object.entries(motivoCounts);
+        entries.forEach(([motivo, count]) => {
+            if (count > topMotivoCount) {
+                topMotivoCount = count;
+                topMotivo = motivo;
+            }
+        });
+    }
+    
+    const topMotivoDisplay = topMotivo.length > 20 ? topMotivo.substring(0, 20) + '...' : topMotivo;
+    
+    // Atualizar KPIs
     $('kTotal').innerText = total;
     $('kOpen').innerText = open;
     $('kClosed').innerText = closed;
     $('kFCR').innerText = fcrPerc + '%';
     $('kAvgTime').innerText = avgTimeDisplay;
+    $('kCnpjCount').innerText = cnpjCount;
+
+    // Atualizar percentuais/trends dos KPIs
+    updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours);
+    
+    // Atualizar motivo mais tratado com tooltip
+    const kTopMotivoElement = $('kTopMotivo');
+    kTopMotivoElement.innerHTML = `<span title="${topMotivo}">${topMotivoDisplay}</span> <span style="font-size:16px; color:var(--color-azul)">(${topMotivoCount})</span>`;
+    kTopMotivoElement.setAttribute('title', topMotivo);
     
     $('headerTotal').innerText = total;
     $('headerOpen').innerText = open;
@@ -3568,12 +4342,70 @@ function renderKPIs() {
     $('kAvgTimeHelper').innerText = CHART_FILTERS['AvgTime'] ?
         'Clique para remover filtro Tempo Médio' : 'Baseado apenas nos casos concluídos';
     
-    ['kpiTotal', 'kpiOpen', 'kpiClosed', 'kpiFCR', 'kpiAvgTime'].forEach(id => $(id).classList.remove('active-filter'));
+    ['kpiTotal', 'kpiOpen', 'kpiClosed', 'kpiFCR', 'kpiAvgTime', 'kpiCnpjCount', 'kpiTopMotivo'].forEach(id => $(id).classList.remove('active-filter'));
     
     if (CHART_FILTERS['Status'] === 'Aberto') $('kpiOpen').classList.add('active-filter');
     else if (CHART_FILTERS['Status'] === 'Fechado' && CHART_FILTERS['FCR_Sim'] !== 'Sim' && !CHART_FILTERS['AvgTime']) $('kpiClosed').classList.add('active-filter');
     else if (CHART_FILTERS['FCR_Sim'] === 'Sim') $('kpiFCR').classList.add('active-filter');
     else if (CHART_FILTERS['AvgTime']) $('kpiAvgTime').classList.add('active-filter');
+    if (CHART_FILTERS['CnpjCount']) $('kpiCnpjCount').classList.add('active-filter');
+    if (CHART_FILTERS['TopMotivo']) $('kpiTopMotivo').classList.add('active-filter');
+}
+
+
+// Função para atualizar os percentuais/trends dos KPIs
+function updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours) {
+    // Percentual de Em Aberto
+    const openPerc = total > 0 ? Math.round((open / total) * 100) : 0;
+    const openTrend = $('kOpenTrend');
+    if (openTrend) {
+        openTrend.className = 'kpi-trend ' + (openPerc > 50 ? 'down' : openPerc > 30 ? 'neutral' : 'up');
+        openTrend.innerHTML = '<span>' + openPerc + '% do total</span>';
+    }
+
+    // Percentual de Concluídos
+    const closedPerc = total > 0 ? Math.round((closed / total) * 100) : 0;
+    const closedTrend = $('kClosedTrend');
+    if (closedTrend) {
+        closedTrend.className = 'kpi-trend ' + (closedPerc >= 70 ? 'up' : closedPerc >= 50 ? 'neutral' : 'down');
+        closedTrend.innerHTML = '<span>' + closedPerc + '% do total</span>';
+    }
+
+    // Total trend removido conforme solicitado
+
+    // FCR - meta de 80%
+    const fcrTrend = $('kFCRTrend');
+    if (fcrTrend) {
+        fcrTrend.className = 'kpi-trend ' + (fcrPerc >= 80 ? 'up' : fcrPerc >= 60 ? 'neutral' : 'down');
+        fcrTrend.innerHTML = '<i class="fa-solid ' + (fcrPerc >= 80 ? 'fa-check' : fcrPerc >= 60 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 80%</span>';
+    }
+
+    // Tempo Médio - meta de 24h
+    const avgTrend = $('kAvgTimeTrend');
+    if (avgTrend) {
+        avgTrend.className = 'kpi-trend ' + (avgTimeHours <= 24 ? 'up' : avgTimeHours <= 48 ? 'neutral' : 'down');
+        if (avgTimeHours > 0) {
+            avgTrend.innerHTML = '<i class="fa-solid ' + (avgTimeHours <= 24 ? 'fa-check' : avgTimeHours <= 48 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 24h</span>';
+        } else {
+            avgTrend.innerHTML = '<i class="fa-solid fa-minus"></i> <span>--</span>';
+        }
+    }
+
+    // CNPJ - média de registros por CNPJ
+    const cnpjTrend = $('kCnpjTrend');
+    if (cnpjTrend) {
+        const avgPerCnpj = cnpjCount > 0 ? (total / cnpjCount).toFixed(1) : 0;
+        cnpjTrend.className = 'kpi-trend neutral';
+        cnpjTrend.innerHTML = '<i class="fa-solid fa-chart-simple"></i> <span>' + avgPerCnpj + ' reg/CNPJ</span>';
+    }
+
+    // Motivo - percentual do top motivo
+    const motivoTrend = $('kMotivoTrend');
+    if (motivoTrend) {
+        const motivoPerc = total > 0 ? Math.round((topMotivoCount / total) * 100) : 0;
+        motivoTrend.className = 'kpi-trend neutral';
+        motivoTrend.innerHTML = '<i class="fa-solid fa-percent"></i> <span>' + motivoPerc + '% do total</span>';
+    }
 }
 
 function filterByKPI(filterType) {
@@ -3617,23 +4449,33 @@ function filterByKPI(filterType) {
             CHART_FILTERS['Status'] = 'Fechado';
             CHART_FILTERS['FCR_Sim'] = null;
         }
+    } else if (filterType === 'CnpjCount') {
+        if (CHART_FILTERS['CnpjCount']) {
+            CHART_FILTERS['CnpjCount'] = null;
+        } else {
+            CHART_FILTERS['CnpjCount'] = 'Sim';
+        }
+    } else if (filterType === 'TopMotivo') {
+        if (CHART_FILTERS['TopMotivo']) {
+            CHART_FILTERS['TopMotivo'] = null;
+        } else {
+            const motivoCounts = {};
+            FILTERED.forEach(item => {
+                const motivo = item.motivo || 'Não informado';
+                motivoCounts[motivo] = (motivoCounts[motivo] || 0) + 1;
+            });
+            let topMotivo = null;
+            let topMotivoCount = 0;
+            Object.entries(motivoCounts).forEach(([motivo, count]) => {
+                if (count > topMotivoCount) {
+                    topMotivoCount = count;
+                    topMotivo = motivo;
+                }
+            });
+            CHART_FILTERS['TopMotivo'] = topMotivo;
+        }
     }
     
-    applyAllFilters();
-}
-
-function filterByGN(gn) {
-    if (CHART_FILTERS['GN'] === gn) {
-        CHART_FILTERS['GN'] = null;
-        delete CHART_FILTERS['Doughnut Selection']['GN'];
-        $('gnSelect').value = '';
-        showToast('Filtro de GN removido', 'info');
-    } else {
-        CHART_FILTERS['GN'] = gn;
-        CHART_FILTERS['Doughnut Selection']['GN'] = gn;
-        $('gnSelect').value = gn;
-        showToast(`Filtrando por GN: ${gn}`, 'success');
-    }
     applyAllFilters();
 }
 
@@ -3648,15 +4490,22 @@ function filterByOrigem(origem) {
     applyAllFilters();
 }
 
+// ===== FUNÇÕES DE RENDERIZAÇÃO DE GRÁFICOS COM NOVAS PALETAS =====
 function renderCharts() {
     const countsAnalista = {};
     FILTERED.forEach(d => countsAnalista[d.analista] = (countsAnalista[d.analista]||0)+1);
     const sortedAnalista = Object.entries(countsAnalista).sort((a,b)=>b[1]-a[1]).slice(0, 15);
-    createBarChart('chartAnal', sortedAnalista.map(x=>x[0]), sortedAnalista.map(x=>x[1]), 'Analista');
     
-    createGNDistributionChart();
+    createBarChart('chartAnal', sortedAnalista.map(x=>x[0]), sortedAnalista.map(x=>x[1]), 'Analista');
     createTipoAtendimentoChart();
     createOrigemContatoChart();
+    
+    const countsGN = {};
+    FILTERED.forEach(d => {
+        const gn = d.gn || 'Não informado';
+        countsGN[gn] = (countsGN[gn]||0)+1;
+    });
+    createDoughnutChart('chartGN', countsGN, 'chartGNCenter', 'legendGN', 'GN');
     
     const countsSub = {};
     FILTERED.forEach(d => {
@@ -3742,20 +4591,16 @@ function createOrigemContatoChart() {
     `;
     
     const legendDiv = $('legendOrigemContato');
-    let legendHtml = `
-        <div style="font-size:13px; font-weight:600; color:var(--brand-blue); margin-bottom:10px; padding-bottom:5px; border-bottom:2px solid var(--border-primary);">
-            <i class="fa-solid fa-list"></i> Legenda (Top ${topOrigem.length})
-        </div>
-    `;
+    let legendHtml = '';
     
     topOrigem.forEach((item, index) => {
         const perc = total > 0 ? Math.round((item.count/total)*100) : 0;
+        const color = GN_PALETTE[index % GN_PALETTE.length];
         legendHtml += `
-            <div style="display:flex;align-items:center;font-size:11px;margin-bottom:8px;color:var(--text-primary);padding:8px 0;border-bottom:1px solid var(--border-light); cursor:pointer;"
-                 onclick="filterByOrigem('${item.origem}')">
-                <span style="width:10px;height:10px;border-radius:50%;background:${GN_PALETTE[index%GN_PALETTE.length]};margin-right:8px;"></span>
-                <span class="truncated" style="flex:1;max-width:100px" title="${item.origem}">${item.origem}</span>
-                <span style="margin-left:auto;font-weight:600;color:var(--brand-blue)">${item.count} (${perc}%)</span>
+            <div class="legend-item" onclick="filterByOrigem('${item.origem.replace(/'/g, "\\'")}')">
+                <span class="legend-color" style="background:${color}"></span>
+                <span class="legend-label" title="${item.origem}">${item.origem}</span>
+                <span class="legend-value">${item.count} (${perc}%)</span>
             </div>
         `;
     });
@@ -3784,11 +4629,7 @@ function createOrigemContatoChart() {
                     display: true,
                     color: '#fff',
                     font: { weight: 'bold', size: 11 },
-                    formatter: (value, context) => {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = Math.round((value / total) * 100);
-                        return `${percentage}%`;
-                    }
+                    formatter: (value) => value
                 }
             },
             onClick: (e, els) => {
@@ -3797,108 +4638,6 @@ function createOrigemContatoChart() {
                 const origem = labels[idx];
                 if (origem !== 'Outros') {
                     filterByOrigem(origem);
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-}
-
-function createTipoAtendimentoChart() {
-    const ctx = $('chartTipoAtendimento').getContext('2d');
-    if(charts.chartTipoAtendimento) charts.chartTipoAtendimento.destroy();
-    
-    const tipoCounts = {};
-    FILTERED.forEach(d => {
-        const tipo = d.tipoContato || 'Não Informado';
-        tipoCounts[tipo] = (tipoCounts[tipo] || 0) + 1;
-    });
-    
-    const tiposArray = Object.entries(tipoCounts);
-    tiposArray.sort((a, b) => b[1] - a[1]);
-    
-    const labels = tiposArray.map(item => item[0]);
-    const data = tiposArray.map(item => item[1]);
-    const total = data.reduce((a, b) => a + b, 0);
-    
-    const backgroundColors = labels.map(label => {
-        if (label === 'Ativo') return IPIRANGA_BLUE;
-        if (label === 'Receptivo') return IPIRANGA_YELLOW; // Alterado para amarelo
-        if (label === 'Não Informado') return '#8B8D9E';
-        return GN_PALETTE[labels.indexOf(label) % GN_PALETTE.length];
-    });
-    
-    charts.chartTipoAtendimento = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Quantidade',
-                data: data,
-                backgroundColor: backgroundColors,
-                borderColor: backgroundColors.map(color => color.replace('0.8', '1')),
-                borderWidth: 1,
-                borderRadius: 6,
-                barPercentage: 0.6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            onClick: (e, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const tipo = labels[index];
-                    if (CHART_FILTERS['TipoContato'] === tipo || $('tipoContatoSelect').value === tipo) {
-                        CHART_FILTERS['TipoContato'] = null;
-                        $('tipoContatoSelect').value = '';
-                        showToast(`Filtro de tipo "${tipo}" removido`, 'info');
-                    } else {
-                        CHART_FILTERS['TipoContato'] = tipo;
-                        $('tipoContatoSelect').value = tipo;
-                        showToast(`Filtrando por tipo: ${tipo}`, 'success');
-                    }
-                    applyAllFilters();
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    color: '#fff',
-                    anchor: 'end',
-                    align: 'top',
-                    font: { weight: 'bold', size: 11 },
-                    formatter: (value, context) => {
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return `${value} (${percentage}%)`;
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.parsed.y;
-                            const percentage = ((value / total) * 100).toFixed(1);
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: {
-                        stepSize: 1,
-                        font: { size: 11 }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        font: { size: 11 },
-                        maxRotation: 45
-                    }
                 }
             }
         },
@@ -3947,9 +4686,12 @@ function createBarChart(id, labels, data, type) {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    color: '#fff',
-                    anchor: 'end',
-                    align: 'top',
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
+                    anchor: 'center',
+                    align: 'center',
                     formatter: (value) => value,
                     font: { weight: 'bold', size: 12 }
                 }
@@ -3975,132 +4717,100 @@ function createBarChart(id, labels, data, type) {
     });
 }
 
-function createGNDistributionChart() {
-    const ctx = $('chartGNDistribution').getContext('2d');
-    if(charts.chartGNDistribution) charts.chartGNDistribution.destroy();
+function createTipoAtendimentoChart() {
+    const ctx = $('chartTipoAtendimento').getContext('2d');
+    if(charts.chartTipoAtendimento) charts.chartTipoAtendimento.destroy();
     
-    const gnCounts = {};
+    const tipoCounts = {};
     FILTERED.forEach(d => {
-        const gn = d.gn || 'Não Informado';
-        gnCounts[gn] = (gnCounts[gn] || 0) + 1;
+        const tipo = d.tipoContato || 'Não Informado';
+        tipoCounts[tipo] = (tipoCounts[tipo] || 0) + 1;
     });
     
-    let gnArray = Object.entries(gnCounts).map(([gn, count]) => ({gn, count}));
-    gnArray.sort((a, b) => b.count - a.count);
+    const tiposArray = Object.entries(tipoCounts);
+    tiposArray.sort((a, b) => b[1] - a[1]);
     
-    let topGN = [];
-    let othersCount = 0;
-    if (gnArray.length > 10) {
-        topGN = gnArray.slice(0, 9);
-        othersCount = gnArray.slice(9).reduce((sum, item) => sum + item.count, 0);
-        if (othersCount > 0) {
-            topGN.push({gn: 'Outros', count: othersCount});
-        }
-    } else {
-        topGN = gnArray;
-    }
-    
-    const labels = topGN.map(item => {
-        let displayName = item.gn;
-        displayName = displayName.replace(/^G\.N\.\s*/i, '');
-        return displayName;
-    });
-    
-    const data = topGN.map(item => item.count);
+    const labels = tiposArray.map(item => item[0]);
+    const data = tiposArray.map(item => item[1]);
     const total = data.reduce((a, b) => a + b, 0);
-    const percentages = data.map(value => ((value / total) * 100).toFixed(1));
     
-    const backgroundColors = topGN.map((item, index) => {
-        if (item.gn === 'Outros') return '#8B8D9E';
-        return GN_PALETTE[index % GN_PALETTE.length];
+    const backgroundColors = labels.map(label => {
+        if (label === 'Ativo') return IPIRANGA_BLUE;
+        if (label === 'Receptivo') return IPIRANGA_YELLOW;
+        if (label === 'Não Informado') return '#8B8D9E';
+        return GN_PALETTE[labels.indexOf(label) % GN_PALETTE.length];
     });
     
-    const centerDiv = $('chartGNCenter');
-    centerDiv.innerHTML = `
-        <div class="doughnut-center-name">Total</div>
-        <div class="doughnut-center-value">${total}</div>
-    `;
-    
-    const legendDiv = $('legendGN');
-    let legendHtml = `
-        <div style="font-size:13px; font-weight:600; color:var(--brand-blue); margin-bottom:10px; padding-bottom:5px; border-bottom:2px solid var(--border-primary);">
-            <i class="fa-solid fa-list"></i> Legenda GN (Top ${topGN.length})
-        </div>
-    `;
-    
-    topGN.forEach((item, index) => {
-        const perc = percentages[index];
-        const isHighlighted = index === 0 && item.gn !== 'Outros';
-        
-        legendHtml += `
-            <div style="display:flex; align-items:center; font-size:11px; margin-bottom:8px; padding:6px 8px; border-radius:6px;
-                        background: ${isHighlighted ? 'rgba(255, 122, 69, 0.1)' : 'transparent'};
-                        border-left: 3px solid ${backgroundColors[index]};
-                        cursor: pointer;"
-                 onclick="filterByGN('${item.gn === 'Outros' ? '' : item.gn}')">
-                <div style="display:flex; align-items:center; flex:1;">
-                    <div style="width:12px; height:12px; border-radius:50%; background:${backgroundColors[index]}; margin-right:10px;
-                         ${isHighlighted ? 'box-shadow: 0 0 0 2px rgba(255, 122, 69, 0.2);' : ''}"></div>
-                    <div style="flex:1; font-weight:${isHighlighted ? '700' : '500'}; color:${isHighlighted ? 'var(--brand-orange)' : 'var(--text-primary)'}">
-                        ${labels[index]}
-                    </div>
-                </div>
-                <div style="text-align:right; font-weight:600; color:var(--brand-blue); min-width: 70px;">
-                    ${item.count} (${perc}%)
-                </div>
-            </div>
-        `;
-    });
-    
-    legendDiv.innerHTML = legendHtml;
-    
-    charts.chartGNDistribution = new Chart(ctx, {
-        type: 'doughnut',
+    charts.chartTipoAtendimento = new Chart(ctx, {
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
+                label: 'Quantidade',
                 data: data,
                 backgroundColor: backgroundColors,
-                borderWidth: 2,
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                hoverBorderWidth: 3,
-                hoverBorderColor: '#fff'
+                borderColor: backgroundColors.map(color => color.replace('0.8', '1')),
+                borderWidth: 1,
+                borderRadius: 6,
+                barPercentage: 0.6
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            onClick: (e, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const tipo = labels[index];
+                    if (CHART_FILTERS['TipoContato'] === tipo || $('tipoContatoSelect').value === tipo) {
+                        CHART_FILTERS['TipoContato'] = null;
+                        $('tipoContatoSelect').value = '';
+                        showToast(`Filtro de tipo "${tipo}" removido`, 'info');
+                    } else {
+                        CHART_FILTERS['TipoContato'] = tipo;
+                        $('tipoContatoSelect').value = tipo;
+                        showToast(`Filtrando por tipo: ${tipo}`, 'success');
+                    }
+                    applyAllFilters();
+                }
+            },
             plugins: {
                 legend: { display: false },
+                datalabels: {
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                    font: { weight: 'bold', size: 11 },
+                    formatter: (value) => value
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
                             const percentage = ((value / total) * 100).toFixed(1);
                             return `${label}: ${value} (${percentage}%)`;
                         }
                     }
-                },
-                datalabels: {
-                    display: true,
-                    color: '#fff',
-                    font: { weight: 'bold', size: 11 },
-                    formatter: (value, context) => {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return `${percentage}%`;
-                    }
                 }
             },
-            onClick: (e, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const gn = topGN[index].gn;
-                    if (gn !== 'Outros') {
-                        filterByGN(gn);
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: {
+                        stepSize: 1,
+                        font: { size: 11 }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 11 },
+                        maxRotation: 45
                     }
                 }
             }
@@ -4132,10 +4842,11 @@ function createDoughnutChart(id, dataObj, centerId, legendId, title) {
     let legendHtml = '';
     top.forEach((item, i) => {
         const perc = total > 0 ? Math.round((item.count/total)*100) : 0;
-        legendHtml += `<div style="display:flex;align-items:center;font-size:11px;margin-bottom:4px;color:var(--text-primary);padding:4px 0;border-bottom:1px solid var(--border-light);">
-            <span style="width:10px;height:10px;border-radius:50%;background:${GN_PALETTE[i%GN_PALETTE.length]};margin-right:8px;"></span>
-            <span class="truncated" style="flex:1;max-width:100px" title="${item.keyDisplay}">${item.keyDisplay}</span>
-            <span style="margin-left:auto;font-weight:600;color:var(--brand-blue)">${item.count} (${perc}%)</span>
+        const color = GN_PALETTE[i % GN_PALETTE.length];
+        legendHtml += `<div class="legend-item" onclick="filterByGN('${item.keyNorm.replace(/'/g, "\\'")}')">
+            <span class="legend-color" style="background:${color}"></span>
+            <span class="legend-label" title="${item.keyDisplay}">${item.keyDisplay}</span>
+            <span class="legend-value">${item.count} (${perc}%)</span>
         </div>`;
     });
     
@@ -4156,17 +4867,15 @@ function createDoughnutChart(id, dataObj, centerId, legendId, title) {
             responsive: true,
             maintainAspectRatio: false,
             cutout: '70%',
+            rotation: -90,
+            circumference: 360,
             plugins: {
                 legend: { display: false },
                 datalabels: {
                     display: true,
                     color: '#fff',
                     font: { weight: 'bold', size: 11 },
-                    formatter: (value, context) => {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = Math.round((value / total) * 100);
-                        return `${percentage}%`;
-                    }
+                    formatter: (value) => value
                 }
             },
             onClick: (e, els) => {
@@ -4183,11 +4892,24 @@ function createDoughnutChart(id, dataObj, centerId, legendId, title) {
                         showToast(`Filtrando por subclasse: ${displayVal}`, 'success');
                     }
                     applyAllFilters();
+                } else if (title === 'GN') {
+                    filterByGN(displayVal);
                 }
             }
         },
         plugins: [ChartDataLabels]
     });
+}
+
+function filterByGN(gn) {
+    if (CHART_FILTERS['GN'] === gn) {
+        CHART_FILTERS['GN'] = null;
+        showToast(`Filtro de GN removido`, 'info');
+    } else {
+        CHART_FILTERS['GN'] = gn;
+        showToast(`Filtrando por GN: ${gn}`, 'success');
+    }
+    applyAllFilters();
 }
 
 function createLineChart(id, totalPoints, closedPoints) {
@@ -4293,10 +5015,8 @@ function createLineChart(id, totalPoints, closedPoints) {
                     const dateLabel = labels[index];
                     const dateISO = dateLabel;
         
-                    // TOGGLE: Se já está filtrado por esta data, remove o filtro
                     if (CHART_FILTERS['Evo Date'] === dateISO) {
                         CHART_FILTERS['Evo Date'] = null;
-                        // Limpa também os inputs de data se estiverem com a mesma data
                         if ($('dateStart').value === dateISO && $('dateEnd').value === dateISO) {
                             $('dateStart').value = '';
                             $('dateEnd').value = '';
@@ -4305,7 +5025,6 @@ function createLineChart(id, totalPoints, closedPoints) {
                         showToast(`Filtro de data removido`, 'info');
                     } else {
                         CHART_FILTERS['Evo Date'] = dateISO;
-                        // Define apenas a data no formato correto para os inputs
                         $('dateStart').value = dateISO;
                         $('dateEnd').value = dateISO;
                         $('datePreset').value = '';
@@ -4323,12 +5042,11 @@ function createHorizontalBarChart(id, labels, data) {
     const ctx = $(id).getContext('2d');
     if(charts[id]) charts[id].destroy();
     
-    // Ajuste a altura do canvas com base no número de barras, mas mantenha o container com altura fixa
     const barHeight = 25;
     const minHeight = 300;
     const canvasHeight = Math.max(minHeight, labels.length * barHeight + 50);
     
-    // Definir altura do canvas
+    ctx.canvas.height = canvasHeight;
     ctx.canvas.style.height = canvasHeight + 'px';
     ctx.canvas.style.width = '100%';
     
@@ -4340,7 +5058,7 @@ function createHorizontalBarChart(id, labels, data) {
                 label: 'Ocorrências',
                 data: data,
                 backgroundColor: labels.map((_, index) => 
-                    GN_PALETTE[index % GN_PALETTE.length]
+                    MOTIVO_PALETTE[index % MOTIVO_PALETTE.length]
                 ),
                 barThickness: 20,
                 borderRadius: 6
@@ -4369,11 +5087,15 @@ function createHorizontalBarChart(id, labels, data) {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    color: '#000',
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
                     anchor: 'end',
-                    align: 'right',
+                    align: 'center',
                     formatter: (val) => val,
-                    font: { weight: 'bold', size: 12 }
+                    font: { weight: 'bold', size: 12 },
+                    offset: 10
                 }
             },
             scales: {
@@ -4430,7 +5152,7 @@ function renderTable() {
     $('nextPage').disabled = CURRENT_PAGE >= totalPages || totalPages === 0;
     
     if(pageData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-muted)">Nenhum dado encontrado</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--text-muted)">Nenhum dado encontrado</td></tr>`;
         return;
     }
     
@@ -4471,7 +5193,6 @@ function renderTable() {
             <td style="${tempoCor}">${row.tempoResolucaoFormatado}</td>
             <td style="${fcrColor}">${row.fcr}</td>
             <td style="font-weight:600;color:var(--brand-blue)">${row.analista}</td>
-            <td class="truncated" title="${row.gn}">${row.gn}</td>
             <td class="truncated" title="${row.motivo}">${row.motivo}</td>
             <td class="truncated" title="${row.sub}">${row.sub}</td>
             <td class="truncated" title="${row.solicitante}">${row.solicitante}</td>
@@ -4533,7 +5254,6 @@ function changePage(delta) {
 }
 
 function handleDatePreset() {
-    // CORREÇÃO: Limpar filtro do gráfico quando usar preset
     CHART_FILTERS['Evo Date'] = null;
     
     const val = $('datePreset').value;
@@ -4580,7 +5300,6 @@ function updateActiveFiltersDisplay() {
     if($('motivoSelect').value) addTag(`Motivo: ${$('motivoSelect').value}`, () => { $('motivoSelect').value=''; applyAllFilters(); });
     if($('analistaSelect').value) addTag(`Analista: ${$('analistaSelect').value}`, () => { $('analistaSelect').value=''; applyAllFilters(); });
     if($('subSelect').value) addTag(`Subclasse: ${$('subSelect').value}`, () => { $('subSelect').value=''; applyAllFilters(); });
-    if($('gnSelect').value) addTag(`GN: ${$('gnSelect').value}`, () => { $('gnSelect').value=''; applyAllFilters(); });
     if($('tipoContatoSelect').value) addTag(`Tipo: ${$('tipoContatoSelect').value}`, () => { $('tipoContatoSelect').value=''; applyAllFilters(); });
     
     if(CHART_FILTERS['Status']) {
@@ -4600,14 +5319,9 @@ function updateActiveFiltersDisplay() {
         addTag(`Analista: ${CHART_FILTERS['Doughnut Selection']['Analista']}`, () => { delete CHART_FILTERS['Doughnut Selection']['Analista']; $('analistaSelect').value=''; applyAllFilters(); });
     }
     
-    if(CHART_FILTERS['Doughnut Selection']['GN']) {
-        addTag(`GN: ${CHART_FILTERS['Doughnut Selection']['GN']}`, () => { delete CHART_FILTERS['Doughnut Selection']['GN']; $('gnSelect').value=''; applyAllFilters(); });
-    }
-    
     if(CHART_FILTERS['Evo Date']) {
         addTag(`Data: ${moment(CHART_FILTERS['Evo Date']).format('DD/MM/YYYY')}`, () => { 
             CHART_FILTERS['Evo Date'] = null;
-            // Só limpa os inputs se eles tiverem a mesma data do filtro
             if ($('dateStart').value === CHART_FILTERS['Evo Date'] && $('dateEnd').value === CHART_FILTERS['Evo Date']) {
                 $('dateStart').value = '';
                 $('dateEnd').value = '';
@@ -4638,6 +5352,27 @@ function updateActiveFiltersDisplay() {
             applyAllFilters();
         });
     }
+    
+    if(CHART_FILTERS['GN']) {
+        addTag(`GN: ${CHART_FILTERS['GN']}`, () => {
+            CHART_FILTERS['GN'] = null;
+            applyAllFilters();
+        });
+    }
+    
+    if(CHART_FILTERS['CnpjCount']) {
+        addTag(`CNPJ Únicos: Sim`, () => {
+            CHART_FILTERS['CnpjCount'] = null;
+            applyAllFilters();
+        }, 'var(--gradient-primary)');
+    }
+    
+    if(CHART_FILTERS['TopMotivo']) {
+        addTag(`Motivo Mais: ${CHART_FILTERS['TopMotivo']}`, () => {
+            CHART_FILTERS['TopMotivo'] = null;
+            applyAllFilters();
+        }, 'var(--gradient-warning)');
+    }
 }
 
 function clearAllFilters() {
@@ -4645,7 +5380,6 @@ function clearAllFilters() {
     $('motivoSelect').value = '';
     $('analistaSelect').value = '';
     $('subSelect').value = '';
-    $('gnSelect').value = '';
     $('tipoContatoSelect').value = '';
     $('dateStart').value = '';
     $('dateEnd').value = '';
@@ -4660,11 +5394,13 @@ function clearAllFilters() {
         'Doughnut Selection': {},
         'Motivo': null,
         'Analista': null,
-        'GN': null,
         'Subclassificação': null,
         'TipoContato': null,
         'AvgTime': null,
-        'Origem': null
+        'Origem': null,
+        'GN': null,
+        'CnpjCount': null,
+        'TopMotivo': null
     };
     
     CURRENT_SORT = { key: 'dtStart', direction: 'desc' };
@@ -4784,15 +5520,12 @@ function addRippleEffect(e) {
 }
 
 // ===== NOVAS FUNÇÕES PARA ANÁLISE POR MOTIVO =====
-
-// Função para carregar os dados analíticos por motivo
 function loadMotivoAnalytics() {
     if (!RAW.length) {
         showToast('Carregue os dados primeiro', 'warning');
         return;
     }
     
-    // Agrupar dados por motivo
     const motivoGroups = {};
     
     RAW.forEach(item => {
@@ -4836,11 +5569,9 @@ function loadMotivoAnalytics() {
         if (item.origemContato) grupo.origens.add(item.origemContato);
     });
     
-    // Calcular métricas derivadas
     motivoAnalyticsData = Object.values(motivoGroups).map(grupo => {
         const fcrPerc = grupo.fechados > 0 ? (grupo.fcrSim / grupo.fechados * 100) : 0;
         
-        // Calcular TMR (média dos tempos de resolução)
         let tmrHoras = 0;
         if (grupo.temposResolucao.length > 0) {
             tmrHoras = grupo.temposResolucao.reduce((a, b) => a + b, 0) / grupo.temposResolucao.length;
@@ -4857,28 +5588,17 @@ function loadMotivoAnalytics() {
         };
     });
     
-    // Renderizar tabela principal
     renderMotivoTable();
-    
-    // Carregar estatísticas
     loadMotivoStats();
-    
-    // Preencher selects
     populateMotivoSelects();
-    
-    // Carregar dados da tab de analistas
     loadAnalistaMotivoData();
-    
-    // Carregar dados da tab de tempo
     loadTMRData();
 }
 
-// Renderizar tabela de distribuição por motivo
 function renderMotivoTable() {
     const tbody = $('motivoTableBody');
     const searchTerm = ($('motivoSearch') || {value: ''}).value.toLowerCase();
     
-    // Filtrar dados
     let filteredData = [...motivoAnalyticsData];
     if (searchTerm) {
         filteredData = filteredData.filter(item => 
@@ -4886,7 +5606,6 @@ function renderMotivoTable() {
         );
     }
     
-    // Ordenar dados
     filteredData.sort((a, b) => {
         const valA = a[currentMotivoSort.key];
         const valB = b[currentMotivoSort.key];
@@ -4910,13 +5629,11 @@ function renderMotivoTable() {
         return currentMotivoSort.direction === 'asc' ? valA - valB : valB - valA;
     });
     
-    // Renderizar linhas
     tbody.innerHTML = '';
     
     filteredData.forEach((item, index) => {
         const tr = document.createElement('tr');
         
-        // Calcular cores para indicadores
         const fcrColor = item.fcrPercentual >= 80 ? 'color:var(--success-green);' 
             : item.fcrPercentual >= 60 ? 'color:var(--brand-orange);' 
             : 'color:var(--error-red);';
@@ -4951,7 +5668,6 @@ function renderMotivoTable() {
     });
 }
 
-// Função para ordenar a tabela de motivos
 function sortMotivoTable(key) {
     if (currentMotivoSort.key === key) {
         currentMotivoSort.direction = currentMotivoSort.direction === 'asc' ? 'desc' : 'asc';
@@ -4963,7 +5679,6 @@ function sortMotivoTable(key) {
     renderMotivoTable();
 }
 
-// Função para carregar estatísticas
 function loadMotivoStats() {
     if (!motivoAnalyticsData) return;
     
@@ -4971,12 +5686,10 @@ function loadMotivoStats() {
     const totalMotivos = motivoAnalyticsData.length;
     const mediaPorMotivo = (totalRegistros / totalMotivos).toFixed(1);
     
-    // Encontrar motivo com maior FCR
     const melhorFCR = motivoAnalyticsData.reduce((best, current) => 
         parseFloat(current.fcrPercentual) > parseFloat(best.fcrPercentual) ? current : best
     );
     
-    // Encontrar motivo mais frequente
     const maisFrequente = motivoAnalyticsData.reduce((most, current) => 
         current.total > most.total ? current : most
     );
@@ -5002,7 +5715,6 @@ function loadMotivoStats() {
         </div>
     `;
     
-    // Top 5 motivos
     const top5 = [...motivoAnalyticsData]
         .sort((a, b) => b.total - a.total)
         .slice(0, 5);
@@ -5022,7 +5734,6 @@ function loadMotivoStats() {
     $('topMotivos').innerHTML = top5HTML;
 }
 
-// Preencher selects com opções de motivo
 function populateMotivoSelects() {
     const selectAnalista = $('analistaFilterMotivo');
     const selectEvolucao = $('motivoEvolucaoSelect');
@@ -5041,14 +5752,12 @@ function populateMotivoSelects() {
     });
 }
 
-// Carregar dados de performance por analista
 function loadAnalistaMotivoData() {
     const motivoSelecionado = $('analistaFilterMotivo').value;
     const filteredData = motivoSelecionado 
         ? RAW.filter(item => item.motivo === motivoSelecionado)
         : RAW;
     
-    // Agrupar por analista
     const analistaGroups = {};
     
     filteredData.forEach(item => {
@@ -5083,12 +5792,10 @@ function loadAnalistaMotivoData() {
             grupo.temposResolucao.push(item.tempoResolucaoHoras);
         }
         
-        // Contar origens
         const origem = item.origemContato || 'Não Informado';
         grupo.origens[origem] = (grupo.origens[origem] || 0) + 1;
     });
     
-    // Calcular métricas e converter para array
     const analistaData = Object.values(analistaGroups).map(grupo => {
         const fcrPerc = grupo.fechados > 0 ? (grupo.fcrSim / grupo.fechados * 100) : 0;
         
@@ -5097,7 +5804,6 @@ function loadAnalistaMotivoData() {
             tmrHoras = grupo.temposResolucao.reduce((a, b) => a + b, 0) / grupo.temposResolucao.length;
         }
         
-        // Encontrar origem principal
         let origemPrincipal = '-';
         let maxCount = 0;
         Object.entries(grupo.origens).forEach(([origem, count]) => {
@@ -5116,7 +5822,6 @@ function loadAnalistaMotivoData() {
         };
     });
     
-    // Renderizar tabela
     const tbody = $('analistaMotivoTable');
     tbody.innerHTML = '';
     
@@ -5135,13 +5840,10 @@ function loadAnalistaMotivoData() {
         tbody.appendChild(tr);
     });
     
-    // Atualizar gráficos
     updateAnalistaCharts(analistaData);
 }
 
-// Atualizar gráficos de analista
 function updateAnalistaCharts(data) {
-    // Gráfico de volume
     const ctx1 = $('chartAnalistaVolume').getContext('2d');
     if (motivoCharts.analistaVolumeChart) motivoCharts.analistaVolumeChart.destroy();
     
@@ -5154,7 +5856,7 @@ function updateAnalistaCharts(data) {
             datasets: [{
                 label: 'Total de Atendimentos',
                 data: sortedData.map(d => d.total),
-                backgroundColor: IPIRANGA_BLUE,
+                backgroundColor: MOTIVO_PALETTE[0],
                 borderRadius: 6
             }]
         },
@@ -5164,7 +5866,10 @@ function updateAnalistaCharts(data) {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    color: '#fff',
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
                     anchor: 'end',
                     align: 'top',
                     font: { weight: 'bold', size: 11 },
@@ -5175,7 +5880,6 @@ function updateAnalistaCharts(data) {
         plugins: [ChartDataLabels]
     });
     
-    // Gráfico de FCR
     const ctx2 = $('chartAnalistaFCR').getContext('2d');
     if (motivoCharts.analistaFCRChart) motivoCharts.analistaFCRChart.destroy();
     
@@ -5187,9 +5891,9 @@ function updateAnalistaCharts(data) {
                 label: 'FCR (%)',
                 data: sortedData.map(d => parseFloat(d.fcrPercentual)),
                 backgroundColor: sortedData.map(d => 
-                    parseFloat(d.fcrPercentual) >= 80 ? SUCCESS_GREEN :
-                    parseFloat(d.fcrPercentual) >= 60 ? BRAND_ORANGE :
-                    'var(--error-red)'
+                    parseFloat(d.fcrPercentual) >= 80 ? MOTIVO_PALETTE[6] :
+                    parseFloat(d.fcrPercentual) >= 60 ? MOTIVO_PALETTE[9] :
+                    MOTIVO_PALETTE[11]
                 ),
                 borderRadius: 6
             }]
@@ -5208,7 +5912,10 @@ function updateAnalistaCharts(data) {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    color: '#fff',
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
                     anchor: 'end',
                     align: 'top',
                     font: { weight: 'bold', size: 11 },
@@ -5220,16 +5927,13 @@ function updateAnalistaCharts(data) {
     });
 }
 
-// Carregar dados de TMR
 function loadTMRData() {
     if (!motivoAnalyticsData) return;
     
-    // Filtrar motivos com TMR válido
     const motivosComTMR = motivoAnalyticsData
         .filter(item => parseFloat(item.tmrHoras) > 0)
         .sort((a, b) => parseFloat(b.tmrHoras) - parseFloat(a.tmrHoras));
     
-    // Calcular TMR geral
     const temposGeral = [];
     motivoAnalyticsData.forEach(item => {
         if (item.temposResolucao && item.temposResolucao.length > 0) {
@@ -5243,7 +5947,6 @@ function loadTMRData() {
     
     $('tmrGeral').textContent = `${tmrGeral}h`;
     
-    // Encontrar motivo mais rápido e mais lento
     if (motivosComTMR.length > 0) {
         const maisRapido = motivosComTMR[motivosComTMR.length - 1];
         const maisLento = motivosComTMR[0];
@@ -5255,7 +5958,6 @@ function loadTMRData() {
         $('tempoMaisLento').textContent = `${maisLento.tmrHoras}h (${maisLento.tmrDias} dias)`;
     }
     
-    // Renderizar gráfico de TMR
     const ctx = $('chartTMRMotivo').getContext('2d');
     if (motivoCharts.tmrChart) motivoCharts.tmrChart.destroy();
     
@@ -5269,9 +5971,9 @@ function loadTMRData() {
                 label: 'TMR (horas)',
                 data: top15.map(d => parseFloat(d.tmrHoras)),
                 backgroundColor: top15.map(d => 
-                    parseFloat(d.tmrHoras) > 48 ? 'var(--error-red)' :
-                    parseFloat(d.tmrHoras) > 24 ? BRAND_ORANGE :
-                    SUCCESS_GREEN
+                    parseFloat(d.tmrHoras) > 48 ? MOTIVO_PALETTE[11] :
+                    parseFloat(d.tmrHoras) > 24 ? MOTIVO_PALETTE[9] :
+                    MOTIVO_PALETTE[6]
                 ),
                 borderRadius: 4
             }]
@@ -5287,7 +5989,10 @@ function loadTMRData() {
                     }
                 },
                 datalabels: {
-                    color: '#fff',
+                    color: function(context) {
+                        const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                        return getContrastColor(backgroundColor);
+                    },
                     anchor: 'end',
                     align: 'top',
                     font: { weight: 'bold', size: 11 },
@@ -5298,13 +6003,11 @@ function loadTMRData() {
         plugins: [ChartDataLabels]
     });
     
-    // Renderizar tabela detalhada
     const tbody = $('tmrDetailTable');
     tbody.innerHTML = '';
     
     motivosComTMR.forEach(item => {
-        // Calcular estatísticas adicionais
-        const casosLentos = item.temposResolucao.filter(t => t > 168).length; // > 7 dias
+        const casosLentos = item.temposResolucao.filter(t => t > 168).length;
         const desvioPadrao = item.temposResolucao.length > 1 
             ? Math.sqrt(item.temposResolucao.reduce((sq, n) => sq + Math.pow(n - parseFloat(item.tmrHoras), 2), 0) / item.temposResolucao.length).toFixed(1)
             : 0;
@@ -5322,25 +6025,14 @@ function loadTMRData() {
     });
 }
 
-// Função para detalhar um motivo específico
 function drillDownMotivo(motivo) {
-    // Aqui você pode implementar um drill-down mais detalhado
-    // Por exemplo, abrir um modal com todos os registros daquele motivo
-    const registrosMotivo = RAW.filter(item => item.motivo === motivo);
-    
-    // Para simplificar, vamos filtrar a tabela principal
     $('motivoSearch').value = motivo;
     renderMotivoTable();
-    
-    // Mudar para a primeira tab
     switchAutomationTab('distribuicao');
-    
     showToast(`Filtrando por motivo: ${motivo}`, 'success');
 }
 
-// Alternar entre tabs
 function switchAutomationTab(tabName) {
-    // Remover classe active de todas as tabs e panes
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -5349,32 +6041,26 @@ function switchAutomationTab(tabName) {
         pane.classList.remove('active');
     });
     
-    // Adicionar classe active à tab e pane selecionados
     document.querySelector(`.tab-btn[data-tab="${tabName}"]`)?.classList.add('active');
     $(`tab-${tabName}`)?.classList.add('active');
     
-    // Atualizar gráficos específicos da tab
     if (tabName === 'evolucao') {
         updateEvolucaoChart();
     }
 }
 
-// Atualizar gráfico de evolução
 function updateEvolucaoChart() {
     const motivoSelecionado = $('motivoEvolucaoSelect').value;
     const periodoSelecionado = $('periodoEvolucao').value;
     
     if (!motivoSelecionado) {
-        // Mostrar mensagem de seleção
         $('tendenciaDiaria').innerHTML = 'Selecione um motivo para visualizar a evolução';
         $('picoOcorrencias').innerHTML = 'Selecione um motivo para visualizar os picos';
         return;
     }
     
-    // Filtrar dados pelo motivo selecionado
     const dadosMotivo = RAW.filter(item => item.motivo === motivoSelecionado);
     
-    // Agrupar por data
     const dadosPorData = {};
     dadosMotivo.forEach(item => {
         if (!item.dtStart) return;
@@ -5388,10 +6074,8 @@ function updateEvolucaoChart() {
         }
     });
     
-    // Ordenar datas
     const datas = Object.keys(dadosPorData).sort();
     
-    // Limitar pelo período selecionado
     let datasFiltradas = datas;
     if (periodoSelecionado !== 'all') {
         const dias = parseInt(periodoSelecionado);
@@ -5403,7 +6087,6 @@ function updateEvolucaoChart() {
     const totais = datasFiltradas.map(d => dadosPorData[d].total);
     const concluidos = datasFiltradas.map(d => dadosPorData[d].concluidos);
     
-    // Renderizar gráfico
     const ctx = $('chartEvolucaoMotivo').getContext('2d');
     if (motivoCharts.evolucaoChart) motivoCharts.evolucaoChart.destroy();
     
@@ -5415,7 +6098,7 @@ function updateEvolucaoChart() {
                 {
                     label: 'Total',
                     data: totais,
-                    borderColor: IPIRANGA_BLUE,
+                    borderColor: MOTIVO_PALETTE[0],
                     backgroundColor: 'rgba(0, 69, 181, 0.1)',
                     fill: true,
                     tension: 0.4
@@ -5423,7 +6106,7 @@ function updateEvolucaoChart() {
                 {
                     label: 'Concluídos',
                     data: concluidos,
-                    borderColor: SUCCESS_GREEN,
+                    borderColor: MOTIVO_PALETTE[6],
                     backgroundColor: 'transparent',
                     borderDash: [5, 5],
                     tension: 0.4
@@ -5450,7 +6133,6 @@ function updateEvolucaoChart() {
         }
     });
     
-    // Atualizar estatísticas
     const totalPeriodo = totais.reduce((a, b) => a + b, 0);
     const mediaDiaria = (totalPeriodo / labels.length).toFixed(1);
     const maiorDia = Math.max(...totais);
@@ -5507,7 +6189,7 @@ function exportCSV() {
         return;
     }
     
-    const headers = ['Status', 'Data Início', 'Data Fim', 'Tempo Resolução', 'FCR', 'Analista', 'GN', 'Motivo', 'Sub Classificação', 'Razão Social', 'Tipo Atendimento', 'Origem Contato'];
+    const headers = ['Status', 'Data Início', 'Data Fim', 'Tempo Resolução', 'FCR', 'Analista', 'Motivo', 'Sub Classificação', 'Razão Social', 'Tipo Atendimento', 'Origem Contato'];
     
     const csvContent = [
         headers.join(','),
@@ -5518,7 +6200,6 @@ function exportCSV() {
             row.tempoResolucaoFormatado,
             row.fcr,
             `"${row.analista}"`,
-            `"${row.gn}"`,
             `"${row.motivo}"`,
             `"${row.sub}"`,
             `"${row.solicitante}"`,
