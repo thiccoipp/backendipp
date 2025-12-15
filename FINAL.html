@@ -2733,6 +2733,10 @@ a:hover {
 </div>
 </div>
 <div class="header-actions">
+<a href="https://thiccoipp.github.io/backendipp/DEMANDAS%20INTERNAS.html" class="btn" style="background-color: #FF6600; color: white; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" title="Demandas Internas" aria-label="Ir para Demandas Internas">
+<i class="fa-solid fa-clipboard-list"></i> Demandas Internas
+</a>
+
 <button onclick="toggleNotifications()" class="btn btn-purple btn-icon" title="Notificações" aria-label="Abrir notificações">
 <i class="fa-solid fa-bell"></i>
 <div class="notification-badge" id="notificationBadge" style="position: absolute; top: -5px; right: -5px; background: var(--error-red); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-weight: 800;">3</div>
@@ -3524,7 +3528,9 @@ Em breve você poderá aproveitar todos os recursos planejados.
 /* ===== JAVASCRIPT PRINCIPAL ===== */
 Chart.register(ChartDataLabels);
 
+
 const DATA_URL = "https://raw.githubusercontent.com/thiccoipp/Ipp/main/base_hub_github.xlsx";
+
 
 // Paleta de cores para gráficos de motivo (sem vermelho e roxo)
 const MOTIVO_PALETTE = [
