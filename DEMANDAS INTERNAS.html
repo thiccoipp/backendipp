@@ -193,35 +193,6 @@
             align-items: center;
         }
 
-        .header-home-btn {
-            background: var(--ip-orange);
-            color: #fff;
-            border: none;
-            border-radius: 999px;
-            padding: 8px 18px;
-            font-size: 13px;
-            font-weight: 700;
-            font-family: Inter, sans-serif;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(255, 105, 0, 0.4);
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .header-home-btn i {
-            font-size: 14px;
-        }
-
-        .header-home-btn:hover {
-            background: var(--ip-orange-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(255, 105, 0, 0.5);
-        }
-
         .btn {
             border-radius: var(--radius-md);
             border: none;
@@ -668,6 +639,16 @@
             transform: scale(1.1);
         }
 
+        .kpi-card.active-filter {
+            border-color: var(--ip-yellow);
+            background: linear-gradient(135deg, rgba(255, 209, 0, 0.05), rgba(255, 209, 0, 0.1));
+        }
+
+        .kpi-card.active-filter::before {
+            opacity: 1;
+            background: linear-gradient(90deg, var(--ip-yellow), var(--ip-orange));
+        }
+
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -1105,9 +1086,9 @@
                 </div>
             </div>
             <div class="header-actions">
-                <!-- Home mesma aba -->
-                <button class="header-home-btn" onclick="window.location.href='https://thiccoipp.github.io/backendipp/FINAL.html'">
-                    <i class="fa-solid fa-house"></i> Home
+                <!-- Botão Home modificado -->
+                <button class="btn btn-icon" onclick="window.location.href='https://thiccoipp.github.io/backendipp/FINAL.html'" title="Voltar para Home">
+                    <i class="fa-solid fa-house"></i>
                 </button>
                 <button class="btn btn-icon" onclick="toggleSidebar()" title="Alternar Sidebar">
                     <i class="fa-solid fa-bars"></i>
@@ -1193,7 +1174,7 @@
             </div>
 
             <div class="kpi-grid">
-                <div class="kpi-card">
+                <div class="kpi-card" id="kpiTotalCard" onclick="filterByKPI('total')">
                     <div class="kpi-content">
                         <div class="kpi-value" id="kTotal">0</div>
                         <div class="kpi-label">
@@ -1205,7 +1186,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card">
+                <div class="kpi-card" id="kTMRCard" onclick="filterByKPI('tmr')">
                     <div class="kpi-content">
                         <div class="kpi-value" id="kTMR">0 min</div>
                         <div class="kpi-label">
@@ -1217,7 +1198,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card">
+                <div class="kpi-card" id="kTopCatCard" onclick="filterByKPI('topcat')">
                     <div class="kpi-content">
                         <div class="kpi-value" id="kTopCat" style="font-size: 20px; line-height: 1.2;">-</div>
                         <div class="kpi-label">
@@ -1229,7 +1210,7 @@
                     </div>
                 </div>
 
-                <div class="kpi-card">
+                <div class="kpi-card" id="kAnalistasCard" onclick="filterByKPI('analistas')">
                     <div class="kpi-content">
                         <div class="kpi-value" id="kAnalistas">0</div>
                         <div class="kpi-label">
@@ -1392,6 +1373,7 @@
         let FILTEREDDATA = [];
         let CHARTS = {};
         let CHARTFILTERS = { analista: null, categoria: null, data: null };
+        let KPI_ACTIVE_FILTER = null;
         let sidebarExpanded = false;
 
         function showLoading(show, text = "Processando...") {
@@ -1703,6 +1685,80 @@
             populateSelect("categoriaSelect", categorias);
         }
 
+        function filterByKPI(type) {
+            // Remove classe ativa de todos os cards KPI
+            document.querySelectorAll('.kpi-card').forEach(card => {
+                card.classList.remove('active-filter');
+            });
+
+            // Ativa o card clicado
+            const card = document.getElementById(`${type}Card` || `k${type.charAt(0).toUpperCase() + type.slice(1)}Card`);
+            if (card) card.classList.add('active-filter');
+
+            KPI_ACTIVE_FILTER = type;
+
+            switch(type) {
+                case 'total':
+                    // Limpa todos os filtros
+                    clearFilters();
+                    showToast("Todos os filtros foram limpos", "info");
+                    break;
+                case 'tmr':
+                    // Filtra pelas demandas com maior duração (top 20%)
+                    const sortedByDuration = [...FILTEREDDATA].sort((a, b) => b.duration - a.duration);
+                    const cutoffIndex = Math.floor(sortedByDuration.length * 0.2);
+                    const topDurationDemands = sortedByDuration.slice(0, cutoffIndex);
+                    
+                    // Cria filtro para mostrar apenas essas demandas
+                    document.getElementById("analistaSelect").value = "";
+                    document.getElementById("categoriaSelect").value = "";
+                    document.getElementById("searchInput").value = "";
+                    document.getElementById("dateStart").value = "";
+                    document.getElementById("dateEnd").value = "";
+                    
+                    // Atualiza dados filtrados
+                    FILTEREDDATA = topDurationDemands;
+                    updateKPIs();
+                    renderCharts();
+                    renderTable();
+                    updateHeaderStats();
+                    showToast("Filtrado: Demandas com maior TMR (top 20%)", "success");
+                    break;
+                case 'topcat':
+                    // Filtra pela categoria mais frequente
+                    const counts = {};
+                    FILTEREDDATA.forEach(d => {
+                        counts[d.categoria] = (counts[d.categoria] || 0) + 1;
+                    });
+                    const topCat = Object.entries(counts)
+                        .sort((a, b) => b[1] - a[1])[0]?.[0];
+                    
+                    if (topCat) {
+                        document.getElementById("categoriaSelect").value = topCat;
+                        CHARTFILTERS.categoria = topCat;
+                        applyFilters();
+                        showToast(`Filtrado pela categoria: ${topCat}`, "success");
+                    }
+                    break;
+                case 'analistas':
+                    // Filtra pelo analista com mais demandas
+                    const analistaCounts = {};
+                    FILTEREDDATA.forEach(d => {
+                        analistaCounts[d.analista] = (analistaCounts[d.analista] || 0) + 1;
+                    });
+                    const topAnalista = Object.entries(analistaCounts)
+                        .sort((a, b) => b[1] - a[1])[0]?.[0];
+                    
+                    if (topAnalista) {
+                        document.getElementById("analistaSelect").value = topAnalista;
+                        CHARTFILTERS.analista = topAnalista;
+                        applyFilters();
+                        showToast(`Filtrado pelo analista: ${topAnalista}`, "success");
+                    }
+                    break;
+            }
+        }
+
         function applyFilters() {
             const fAnalista = document.getElementById("analistaSelect").value;
             const fCat = document.getElementById("categoriaSelect").value;
@@ -1751,6 +1807,13 @@
             CHARTFILTERS.analista = null;
             CHARTFILTERS.categoria = null;
             CHARTFILTERS.data = null;
+            KPI_ACTIVE_FILTER = null;
+            
+            // Remove classe ativa dos cards KPI
+            document.querySelectorAll('.kpi-card').forEach(card => {
+                card.classList.remove('active-filter');
+            });
+            
             applyFilters();
             showToast("Filtros limpos", "info");
         }
