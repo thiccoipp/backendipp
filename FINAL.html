@@ -646,6 +646,36 @@ body {
     line-height: 1.3;
 }
 
+/* === KPI TRENDS === */
+.kpi-trend {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    width: fit-content;
+}
+
+.kpi-trend.up {
+    background: rgba(0, 201, 167, 0.15);
+    color: var(--success-green);
+}
+
+.kpi-trend.down {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--error-red);
+}
+
+.kpi-trend.neutral {
+    background: rgba(139, 141, 158, 0.15);
+    color: var(--text-muted);
+}
+
+
+
 .kpi-icon {
     font-size: 36px;
     opacity: 0.2;
@@ -2864,6 +2894,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kTotal">0</div>
 <div class="kpi-lbl">Total de registros</div>
+<div class="kpi-trend neutral" id="kTotalTrend"><i class="fa-solid fa-filter"></i> <span>--</span></div>
 <div class="kpi-helper" id="kTotalHelper">Clique para limpar todos os filtros</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-layer-group"></i></div>
@@ -2872,6 +2903,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kOpen" style="color:var(--color-amarelo)">0</div>
 <div class="kpi-lbl">Em aberto</div>
+<div class="kpi-trend neutral" id="kOpenTrend"><i class="fa-solid fa-minus"></i> <span>0%</span></div>
 <div class="kpi-helper" id="kOpenHelper">Clique para filtrar/desfiltrar por status "Em Aberto"</div>
 </div>
 <div class="kpi-icon"><i class="fa-regular fa-clock"></i></div>
@@ -2880,6 +2912,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kClosed" style="color:var(--color-aqua)">0</div>
 <div class="kpi-lbl">Concluídos</div>
+<div class="kpi-trend neutral" id="kClosedTrend"><i class="fa-solid fa-minus"></i> <span>0%</span></div>
 <div class="kpi-helper" id="kClosedHelper">Clique para filtrar/desfiltrar por status "Concluído"</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-check-circle"></i></div>
@@ -2888,6 +2921,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kFCR">0%</div>
 <div class="kpi-lbl">FCR (Resolução 1ª)</div>
+<div class="kpi-trend neutral" id="kFCRTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 80%</span></div>
 <div class="kpi-helper" id="kFCRHelper">Clique para filtrar/desfiltrar por FCR = Sim</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
@@ -2896,6 +2930,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kAvgTime">0h</div>
 <div class="kpi-lbl">Tempo Médio Resolução</div>
+<div class="kpi-trend neutral" id="kAvgTimeTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 24h</span></div>
 <div class="kpi-helper" id="kAvgTimeHelper">Baseado apenas nos casos concluídos</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
@@ -2906,6 +2941,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kCnpjCount">0</div>
 <div class="kpi-lbl">CNPJ Únicos</div>
+<div class="kpi-trend neutral" id="kCnpjTrend"><i class="fa-solid fa-chart-simple"></i> <span>--</span></div>
 <div class="kpi-helper">Quantidade de CNPJ distintos no período</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-building"></i></div>
@@ -2916,6 +2952,7 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kTopMotivo" title="">-</div>
 <div class="kpi-lbl">Motivo Mais Tratado <i class="fa-solid fa-circle-info motivo-info-icon" onclick="showMotivoDetailsPopup(event)"></i></div>
+<div class="kpi-trend neutral" id="kMotivoTrend"><i class="fa-solid fa-percent"></i> <span>--</span></div>
 <div class="kpi-helper">Tema com maior volume</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-chart-bar"></i></div>
@@ -4275,6 +4312,9 @@ function renderKPIs() {
     $('kFCR').innerText = fcrPerc + '%';
     $('kAvgTime').innerText = avgTimeDisplay;
     $('kCnpjCount').innerText = cnpjCount;
+
+    // Atualizar percentuais/trends dos KPIs
+    updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours);
     
     // Atualizar motivo mais tratado com tooltip
     const kTopMotivoElement = $('kTopMotivo');
@@ -4310,6 +4350,68 @@ function renderKPIs() {
     else if (CHART_FILTERS['AvgTime']) $('kpiAvgTime').classList.add('active-filter');
     if (CHART_FILTERS['CnpjCount']) $('kpiCnpjCount').classList.add('active-filter');
     if (CHART_FILTERS['TopMotivo']) $('kpiTopMotivo').classList.add('active-filter');
+}
+
+
+// Função para atualizar os percentuais/trends dos KPIs
+function updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours) {
+    // Percentual de Em Aberto
+    const openPerc = total > 0 ? Math.round((open / total) * 100) : 0;
+    const openTrend = $('kOpenTrend');
+    if (openTrend) {
+        openTrend.className = 'kpi-trend ' + (openPerc > 50 ? 'down' : openPerc > 30 ? 'neutral' : 'up');
+        openTrend.innerHTML = '<i class="fa-solid ' + (openPerc > 50 ? 'fa-arrow-up' : openPerc > 30 ? 'fa-minus' : 'fa-arrow-down') + '"></i> <span>' + openPerc + '% do total</span>';
+    }
+
+    // Percentual de Concluídos
+    const closedPerc = total > 0 ? Math.round((closed / total) * 100) : 0;
+    const closedTrend = $('kClosedTrend');
+    if (closedTrend) {
+        closedTrend.className = 'kpi-trend ' + (closedPerc >= 70 ? 'up' : closedPerc >= 50 ? 'neutral' : 'down');
+        closedTrend.innerHTML = '<i class="fa-solid ' + (closedPerc >= 70 ? 'fa-arrow-up' : closedPerc >= 50 ? 'fa-minus' : 'fa-arrow-down') + '"></i> <span>' + closedPerc + '% do total</span>';
+    }
+
+    // Total - mostrar registros do RAW
+    const totalTrend = $('kTotalTrend');
+    if (totalTrend) {
+        const filteredPerc = RAW.length > 0 ? Math.round((total / RAW.length) * 100) : 0;
+        totalTrend.className = 'kpi-trend neutral';
+        totalTrend.innerHTML = '<i class="fa-solid fa-filter"></i> <span>' + filteredPerc + '% da base</span>';
+    }
+
+    // FCR - meta de 80%
+    const fcrTrend = $('kFCRTrend');
+    if (fcrTrend) {
+        fcrTrend.className = 'kpi-trend ' + (fcrPerc >= 80 ? 'up' : fcrPerc >= 60 ? 'neutral' : 'down');
+        fcrTrend.innerHTML = '<i class="fa-solid ' + (fcrPerc >= 80 ? 'fa-check' : fcrPerc >= 60 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 80%</span>';
+    }
+
+    // Tempo Médio - meta de 24h
+    const avgTrend = $('kAvgTimeTrend');
+    if (avgTrend) {
+        avgTrend.className = 'kpi-trend ' + (avgTimeHours <= 24 ? 'up' : avgTimeHours <= 48 ? 'neutral' : 'down');
+        if (avgTimeHours > 0) {
+            avgTrend.innerHTML = '<i class="fa-solid ' + (avgTimeHours <= 24 ? 'fa-check' : avgTimeHours <= 48 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 24h</span>';
+        } else {
+            avgTrend.innerHTML = '<i class="fa-solid fa-minus"></i> <span>--</span>';
+        }
+    }
+
+    // CNPJ - média de registros por CNPJ
+    const cnpjTrend = $('kCnpjTrend');
+    if (cnpjTrend) {
+        const avgPerCnpj = cnpjCount > 0 ? (total / cnpjCount).toFixed(1) : 0;
+        cnpjTrend.className = 'kpi-trend neutral';
+        cnpjTrend.innerHTML = '<i class="fa-solid fa-chart-simple"></i> <span>' + avgPerCnpj + ' reg/CNPJ</span>';
+    }
+
+    // Motivo - percentual do top motivo
+    const motivoTrend = $('kMotivoTrend');
+    if (motivoTrend) {
+        const motivoPerc = total > 0 ? Math.round((topMotivoCount / total) * 100) : 0;
+        motivoTrend.className = 'kpi-trend neutral';
+        motivoTrend.innerHTML = '<i class="fa-solid fa-percent"></i> <span>' + motivoPerc + '% do total</span>';
+    }
 }
 
 function filterByKPI(filterType) {
