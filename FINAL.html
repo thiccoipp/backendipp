@@ -2763,13 +2763,12 @@ a:hover {
 </div>
 </div>
 <div class="header-actions">
-<a href="https://thiccoipp.github.io/backendipp/DEMANDAS%20INTERNAS.html" class="btn" style="background-color: #FF6600; color: white; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" title="Demandas Internas" aria-label="Ir para Demandas Internas">
+<a href="https://thiccoipp.github.io/backendipp/DEMANDAS%20INTERNAS.html" class="btn" style="background-color: #FF6600; color: white; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" title="Requisições Internas" aria-label="Ir para Requisições Internas">
 <i class="fa-solid fa-clipboard-list"></i> Requisições Internas
 </a>
-
-<button onclick="toggleNotifications()" class="btn btn-purple btn-icon" title="Notificações" aria-label="Abrir notificações">
-<i class="fa-solid fa-bell"></i>
-<div class="notification-badge" id="notificationBadge" style="position: absolute; top: -5px; right: -5px; background: var(--error-red); color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-weight: 800;">3</div>
+<div style="width: 1px; height: 28px; background: rgba(255,255,255,0.3); margin: 0 8px;"></div>
+<button onclick="toggleFullScreen()" class="btn btn-purple btn-icon" title="Tela Cheia" aria-label="Expandir para tela cheia">
+<i class="fa-solid fa-expand"></i>
 </button>
 <button onclick="exportCSV()" class="btn btn-secondary btn-icon" title="Exportar CSV" aria-label="Exportar dados em formato CSV">
 <i class="fa-solid fa-file-export"></i>
@@ -2880,8 +2879,9 @@ Base Remota Carregada
 <button class="btn btn-automation" onclick="showAutomationModal()" aria-label="Dashboard de Análise por Motivo">
 <i class="fa-solid fa-chart-network"></i> Dashboard por Motivo
 </button>
-<button onclick="toggleFullScreen()" class="btn btn-ghost" style="font-size:12px; padding:8px 12px;" aria-label="Alternar tela cheia">
-<i class="fa-solid fa-expand"></i> Tela Cheia
+
+<button onclick="generateExecutiveReport()" class="btn btn-purple" aria-label="Gerar relatório executivo">
+<i class="fa-solid fa-file-pdf"></i> Relatório Executivo
 </button>
 </div>
 </div>
@@ -2894,7 +2894,10 @@ Base Remota Carregada
 <div class="kpi-content">
 <div class="kpi-val" id="kTotal">0</div>
 <div class="kpi-lbl">Total de registros</div>
-
+<div class="demanda-interna-indicator" style="font-size: 0.75em; color: #64748b; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+<i class="fa-solid fa-inbox" style="font-size: 0.9em;"></i>
+<span id="demandaInternaCount">0</span> demandas internas
+</div>
 <div class="kpi-helper" id="kTotalHelper">Clique para limpar todos os filtros</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-layer-group"></i></div>
@@ -2928,9 +2931,9 @@ Base Remota Carregada
 </div>
 <div class="kpi-card slide-in-left avg-time-card" id="kpiAvgTime" data-filter="AvgTime" style="animation-delay: 0.5s">
 <div class="kpi-content">
-<div class="kpi-val" id="kAvgTime">0h</div>
+<div class="kpi-val" id="kAvgTime">0d</div>
 <div class="kpi-lbl">Tempo Médio Resolução</div>
-<div class="kpi-trend neutral" id="kAvgTimeTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 24h</span></div>
+<div class="kpi-trend neutral" id="kAvgTimeTrend"><i class="fa-solid fa-minus"></i> <span>Meta: 1.0d</span></div>
 <div class="kpi-helper" id="kAvgTimeHelper">Baseado apenas nos casos concluídos</div>
 </div>
 <div class="kpi-icon"><i class="fa-solid fa-hourglass-half"></i></div>
@@ -2962,21 +2965,7 @@ Base Remota Carregada
 </div>
 
 <div class="charts-grid">
-<div class="card fade-in" style="animation-delay: 0.2s">
-<div class="card-header-row">
-<div>
-<h3 class="card-title"><i class="fa-solid fa-trophy" style="color:var(--brand-yellow)"></i> Performance por Analista</h3>
-<div class="card-subtitle">Volume total de atividades por responsável</div>
-</div>
-</div>
-<div class="chart-container">
-<canvas id="chartAnal" role="img" aria-label="Gráfico de barras com atendimentos por analista"></canvas>
-</div>
-<div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:10px; font-weight:500;">
-<i class="fa-solid fa-mouse-pointer"></i> Clique em um analista para filtrar/desfiltrar
-</div>
-</div>
-
+<!-- Linha 1: Tipo de Atendimento e Canais de Contato -->
 <div class="card fade-in" style="animation-delay: 0.3s">
 <div class="card-header-row">
 <div>
@@ -3027,7 +3016,24 @@ Base Remota Carregada
 </div>
 </div>
 
+<!-- Linha 2: Subclassificação e GN -->
 <div class="card fade-in" style="animation-delay: 0.5s">
+<div class="card-header-row">
+<div>
+<h3 class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--brand-blue)"></i> Subclassificação</h3>
+<div class="card-subtitle">Distribuição dos atendimentos por subclasse</div>
+</div>
+</div>
+<div style="display:flex; height:300px; align-items:center;">
+<div style="flex:1; position:relative;">
+<canvas id="chartSubclassificacao" role="img" aria-label="Gráfico de rosca por subclassificação"></canvas>
+<div class="doughnut-center-info" id="chartSubclassificacaoCenter"></div>
+</div>
+<div id="legendSubclassificacao" class="legend-container"></div>
+</div>
+</div>
+
+<div class="card fade-in" style="animation-delay: 0.55s">
 <div class="card-header-row">
 <div>
 <h3 class="card-title"><i class="fa-solid fa-map" style="color:var(--brand-orange)"></i> Atendimentos por GN</h3>
@@ -3043,8 +3049,27 @@ Base Remota Carregada
 </div>
 </div>
 
-<!-- MOVENDO EVOLUÇÃO DIÁRIA PARA AQUI -->
-<div class="card fade-in" style="animation-delay: 0.55s">
+<!-- Linha 3: Distribuição por Motivo (ocupa duas colunas) -->
+<div class="card fade-in" style="animation-delay: 0.6s; grid-column: span 2;">
+<div class="card-header-row">
+<div>
+<h3 class="card-title"><i class="fa-solid fa-folder-open" style="color:var(--brand-orange)"></i> Distribuição por Motivo</h3>
+<div class="card-subtitle">Temas mais recorrentes (Ordenado)</div>
+</div>
+<button onclick="downloadChart('chartMot', 'distribuicao-motivo.png')" class="btn btn-ghost" style="padding:6px 12px; font-size:11px;">
+<i class="fa-solid fa-download"></i> Exportar
+</button>
+</div>
+<div class="chart-scroll-container">
+<canvas id="chartMot" role="img" aria-label="Gráfico de barra horizontal por motivo"></canvas>
+</div>
+<div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:10px; font-weight:500;">
+<i class="fa-solid fa-mouse-pointer"></i> Clique em qualquer barra para filtrar/desfiltrar por motivo
+</div>
+</div>
+
+<!-- Linha 4: Evolução Diária e Performance por Analista -->
+<div class="card fade-in" style="animation-delay: 0.7s">
 <div class="card-header-row">
 <div>
 <h3 class="card-title"><i class="fa-solid fa-chart-line" style="color:var(--brand-blue)"></i> Evolução Diária</h3>
@@ -3069,39 +3094,18 @@ Base Remota Carregada
 </div>
 </div>
 
-<div class="card fade-in" style="animation-delay: 0.6s">
+<div class="card fade-in" style="animation-delay: 0.2s">
 <div class="card-header-row">
 <div>
-<h3 class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--brand-blue)"></i> Subclassificação</h3>
-<div class="card-subtitle">Distribuição dos atendimentos por subclasse</div>
+<h3 class="card-title"><i class="fa-solid fa-trophy" style="color:var(--brand-yellow)"></i> Performance por Analista</h3>
+<div class="card-subtitle">Volume total de atividades por responsável</div>
 </div>
 </div>
-<div style="display:flex; height:300px; align-items:center;">
-<div style="flex:1; position:relative;">
-<canvas id="chartSubclassificacao" role="img" aria-label="Gráfico de rosca por subclassificação"></canvas>
-<div class="doughnut-center-info" id="chartSubclassificacaoCenter"></div>
-</div>
-<div id="legendSubclassificacao" class="legend-container"></div>
-</div>
-</div>
-</div>
-
-<div class="charts-grid">
-<div class="card fade-in wide-chart" style="animation-delay: 0.7s">
-<div class="card-header-row">
-<div>
-<h3 class="card-title"><i class="fa-solid fa-folder-open" style="color:var(--brand-orange)"></i> Distribuição por Motivo</h3>
-<div class="card-subtitle">Temas mais recorrentes (Ordenado)</div>
-</div>
-<button onclick="downloadChart('chartMot', 'distribuicao-motivo.png')" class="btn btn-ghost" style="padding:6px 12px; font-size:11px;">
-<i class="fa-solid fa-download"></i> Exportar
-</button>
-</div>
-<div class="chart-scroll-container">
-<canvas id="chartMot" role="img" aria-label="Gráfico de barra horizontal por motivo"></canvas>
+<div class="chart-container">
+<canvas id="chartAnal" role="img" aria-label="Gráfico de barras com atendimentos por analista"></canvas>
 </div>
 <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:10px; font-weight:500;">
-<i class="fa-solid fa-mouse-pointer"></i> Clique em qualquer barra para filtrar/desfiltrar por motivo
+<i class="fa-solid fa-mouse-pointer"></i> Clique em um analista para filtrar/desfiltrar
 </div>
 </div>
 </div>
@@ -3155,9 +3159,6 @@ Aguardando dados...
         <i class="fa-solid fa-info-circle" style="color:var(--brand-blue)"></i>
         <span>Use <kbd style="background:var(--gradient-primary); color:white; padding:2px 8px; border-radius:4px; font-weight:600;">F</kbd> para focar na busca rápida (Clique para ajuda)</span>
     </div>
-<i class="fa-solid fa-info-circle" style="color:var(--brand-blue)"></i>
-<span>Use <kbd style="background:var(--gradient-primary); color:white; padding:2px 8px; border-radius:4px; font-weight:600;">F</kbd> para focar na busca rápida</span>
-</div>
 </div>
 </div>
 
@@ -3220,7 +3221,7 @@ TEMPO MÉDIO RESOLUÇÃO calculado com base apenas nos casos concluídos.
 </div>
 <div class="notification-item-stats">
 <div style="flex: 1;">
-<div class="stat-number" style="color: var(--purple)">18h</div>
+<div class="stat-number" style="color: var(--purple)">0.8d</div>
 <div class="stat-label">Tempo Médio</div>
 </div>
 </div>
@@ -3319,7 +3320,7 @@ Em breve você poderá aproveitar todos os recursos planejados.
                                 <th data-key="abertos" onclick="sortMotivoTable('abertos')">Em Aberto <span class="sort-indicator"></span></th>
                                 <th data-key="fechados" onclick="sortMotivoTable('fechados')">Concluídos <span class="sort-indicator"></span></th>
                                 <th data-key="fcr" onclick="sortMotivoTable('fcr')">FCR <span class="sort-indicator"></span></th>
-                                <th data-key="tmr" onclick="sortMotivoTable('tmr')">TMR (horas) <span class="sort-indicator"></span></th>
+                                <th data-key="tmr" onclick="sortMotivoTable('tmr')">TMR (dias) <span class="sort-indicator"></span></th>
                                 <th data-key="analistas" onclick="sortMotivoTable('analistas')">Analistas <span class="sort-indicator"></span></th>
                                 <th data-key="tipos" onclick="sortMotivoTable('tipos')">Tipos Contato <span class="sort-indicator"></span></th>
                                 <th>Ações</th>
@@ -3384,7 +3385,7 @@ Em breve você poderá aproveitar todos os recursos planejados.
                                 <th>Aberto</th>
                                 <th>Concluído</th>
                                 <th>FCR</th>
-                                <th>TMR Médio</th>
+                                <th>TMR Médio (dias)</th>
                                 <th>Origem Principal</th>
                             </tr>
                         </thead>
@@ -3416,7 +3417,7 @@ Em breve você poderá aproveitar todos os recursos planejados.
                     <div style="display: flex; flex-direction: column; gap: 15px;">
                         <div class="stat-card">
                             <h4 style="color: var(--brand-blue);">TMR Geral</h4>
-                            <div style="font-size: 28px; font-weight: 900; color: var(--brand-blue);" id="tmrGeral">0h</div>
+                            <div style="font-size: 28px; font-weight: 900; color: var(--brand-blue);" id="tmrGeral">0d</div>
                             <div style="font-size: 12px; color: var(--text-muted);">Média de todos os motivos concluídos</div>
                         </div>
                         
@@ -3444,7 +3445,6 @@ Em breve você poderá aproveitar todos os recursos planejados.
                                 <tr>
                                     <th>Motivo</th>
                                     <th>Total Concluídos</th>
-                                    <th>TMR (horas)</th>
                                     <th>TMR (dias)</th>
                                     <th>Desvio Padrão</th>
                                     <th>Casos > 7 dias</th>
@@ -3545,7 +3545,7 @@ Em breve você poderá aproveitar todos os recursos planejados.
             <div class="motivo-details-value" id="detailTempoMaisDemorado">-</div>
         </div>
         <div class="motivo-details-note">
-            <i class="fa-solid fa-info-circle"></i> Nota: Os tempos são calculados com base na média de resolução por motivo (apenas casos concluídos).
+            <i class="fa-solid fa-info-circle"></i> Nota: Os tempos são calculados com base na média de resolução por motivo (apenas casos concluídos) em dias.
         </div>
     </div>
 </div>
@@ -3564,6 +3564,53 @@ Em breve você poderá aproveitar todos os recursos planejados.
 <script>
 /* ===== JAVASCRIPT PRINCIPAL ===== */
 Chart.register(ChartDataLabels);
+
+// === FUNÇÕES GLOBAIS DE HOVER PARA LEGENDAS DAS ROSCAS ===
+window.highlightLegendItem = function(legendId, index) {
+    const legendDiv = document.getElementById(legendId);
+    if (!legendDiv) return;
+    // Primeiro remove todos os highlights
+    legendDiv.querySelectorAll('.legend-item').forEach(item => {
+        item.classList.remove('legend-item-highlight');
+    });
+    // Adiciona highlight no item específico
+    const items = legendDiv.querySelectorAll('.legend-item');
+    if (items[index]) {
+        items[index].classList.add('legend-item-highlight');
+    }
+};
+
+window.unhighlightAllLegendItems = function(legendId) {
+    const legendDiv = document.getElementById(legendId);
+    if (!legendDiv) return;
+    legendDiv.querySelectorAll('.legend-item').forEach(item => {
+        item.classList.remove('legend-item-highlight');
+    });
+};
+
+// Função para configurar hover em gráficos de rosca
+window.setupDoughnutHover = function(chartInstance, legendId) {
+    const canvas = chartInstance.canvas;
+
+    canvas.addEventListener('mousemove', function(e) {
+        const points = chartInstance.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
+        if (points.length > 0) {
+            const idx = points[0].index;
+            canvas.style.cursor = 'pointer';
+            window.highlightLegendItem(legendId, idx);
+        } else {
+            canvas.style.cursor = 'default';
+            window.unhighlightAllLegendItems(legendId);
+        }
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+        canvas.style.cursor = 'default';
+        window.unhighlightAllLegendItems(legendId);
+    });
+};
+
+
 
 
 const DATA_URL = "https://raw.githubusercontent.com/thiccoipp/Ipp/main/base_hub_github.xlsx";
@@ -3621,6 +3668,17 @@ const IPIRANGA_YELLOW = '#FFD100';
 const IPIRANGA_ORANGE = '#FF6900';
 
 let RAW = [], FILTERED = [], CURRENT_PAGE = 1, ITEMS_PER_PAGE = 15;
+
+// Função para normalizar motivo REDE para Adquirente Redecard
+function normalizarMotivo(motivo) {
+    if (!motivo) return motivo;
+    const motivoStr = motivo.toString().trim();
+    if (motivoStr.toUpperCase() === 'REDE') {
+        return 'Adquirente Redecard';
+    }
+    return motivoStr;
+}
+
 
 let CHART_FILTERS = {
     'Table Row': null,
@@ -3714,9 +3772,9 @@ function showMotivoDetailsPopup(event) {
         } 
     }); 
     
-    // Calculate the averages 
+    // Calculate the averages in days
     Object.keys(motivoTempos).forEach(motivo => { 
-        motivoTempos[motivo].avg = motivoTempos[motivo].total / motivoTempos[motivo].count; 
+        motivoTempos[motivo].avg = (motivoTempos[motivo].total / motivoTempos[motivo].count) / 24; // Convert hours to days
     }); 
     
     // Find the fastest and slowest 
@@ -3757,9 +3815,9 @@ function showMotivoDetailsPopup(event) {
     $('detailMotivoMaisTratado').innerText = topMotivo; 
     $('detailQuantidade').innerText = topMotivoCount; 
     $('detailMaisRapido').innerText = maisRapido.motivo; 
-    $('detailTempoMaisRapido').innerText = maisRapido.tempo !== Infinity ? maisRapido.tempo.toFixed(1) + ' horas' : '-'; 
+    $('detailTempoMaisRapido').innerText = maisRapido.tempo !== Infinity ? maisRapido.tempo.toFixed(1) + ' dias' : '-'; 
     $('detailMaisDemorado').innerText = maisDemorado.motivo; 
-    $('detailTempoMaisDemorado').innerText = maisDemorado.tempo !== -Infinity ? maisDemorado.tempo.toFixed(1) + ' horas' : '-'; 
+    $('detailTempoMaisDemorado').innerText = maisDemorado.tempo !== -Infinity ? maisDemorado.tempo.toFixed(1) + ' dias' : '-'; 
     
     // Show the popup 
     const popup = $('motivoDetailsPopup'); 
@@ -3978,14 +4036,8 @@ function markAllAsRead() {
 }
 
 function updateNotificationBadge(count) {
-    const badge = $('notificationBadge');
-    notificationCount = count;
-    if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
+    // Função desativada - notificações removidas
+    return;
 }
 
 async function initLoadFromGitHub() {
@@ -4079,7 +4131,7 @@ function processExcelData(arrayBuffer) {
                 tempoResolucao = diffMs;
                 tempoResolucaoDias = diffMs / (1000 * 60 * 60 * 24);
                 tempoResolucaoHoras = diffMs / (1000 * 60 * 60);
-                tempoResolucaoFormatado = tempoResolucaoHoras < 24 ? `${Math.round(tempoResolucaoHoras)}h` : `${tempoResolucaoDias.toFixed(1)} dias`;
+                tempoResolucaoFormatado = tempoResolucaoDias < 1 ? `${(tempoResolucaoDias * 24).toFixed(1)}h` : `${tempoResolucaoDias.toFixed(1)} dias`;
             }
             
             let tipoContato = String(row["Tipo de contato"] || "").trim();
@@ -4262,18 +4314,15 @@ function renderKPIs() {
     const fcrCount = FILTERED.filter(d => (d.fcr || '').toUpperCase() === 'SIM').length;
     const fcrPerc = total > 0 ? Math.round((fcrCount / total) * 100) : 0;
     
+    // Cálculo do tempo médio em dias
     const closedWithTime = FILTERED.filter(d => d.statusNorm === 'Fechado' && d.tempoResolucao !== null);
-    let avgTimeHours = 0;
-    let avgTimeDisplay = "0h";
+    let avgTimeDays = 0;
+    let avgTimeDisplay = "0d";
     if (closedWithTime.length > 0) {
         const totalMs = closedWithTime.reduce((acc, d) => acc + d.tempoResolucao, 0);
-        avgTimeHours = totalMs / closedWithTime.length / (1000 * 60 * 60);
-        if (avgTimeHours < 24) {
-            avgTimeDisplay = `${Math.round(avgTimeHours)}h`;
-        } else {
-            const avgDays = (avgTimeHours / 24).toFixed(1);
-            avgTimeDisplay = `${avgDays}d`;
-        }
+        const avgTimeHours = totalMs / closedWithTime.length / (1000 * 60 * 60);
+        avgTimeDays = (avgTimeHours / 24).toFixed(1);
+        avgTimeDisplay = `${avgTimeDays}d`;
     }
     
     // CNPJ únicos
@@ -4314,7 +4363,7 @@ function renderKPIs() {
     $('kCnpjCount').innerText = cnpjCount;
 
     // Atualizar percentuais/trends dos KPIs
-    updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours);
+    updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeDays);
     
     // Atualizar motivo mais tratado com tooltip
     const kTopMotivoElement = $('kTopMotivo');
@@ -4354,7 +4403,7 @@ function renderKPIs() {
 
 
 // Função para atualizar os percentuais/trends dos KPIs
-function updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeHours) {
+function updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount, avgTimeDays) {
     // Percentual de Em Aberto
     const openPerc = total > 0 ? Math.round((open / total) * 100) : 0;
     const openTrend = $('kOpenTrend');
@@ -4380,12 +4429,13 @@ function updateKPITrends(total, open, closed, fcrPerc, cnpjCount, topMotivoCount
         fcrTrend.innerHTML = '<i class="fa-solid ' + (fcrPerc >= 80 ? 'fa-check' : fcrPerc >= 60 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 80%</span>';
     }
 
-    // Tempo Médio - meta de 24h
+    // Tempo Médio - meta de 1.0 dias
     const avgTrend = $('kAvgTimeTrend');
     if (avgTrend) {
-        avgTrend.className = 'kpi-trend ' + (avgTimeHours <= 24 ? 'up' : avgTimeHours <= 48 ? 'neutral' : 'down');
-        if (avgTimeHours > 0) {
-            avgTrend.innerHTML = '<i class="fa-solid ' + (avgTimeHours <= 24 ? 'fa-check' : avgTimeHours <= 48 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 24h</span>';
+        const avgTimeDaysNum = parseFloat(avgTimeDays) || 0;
+        avgTrend.className = 'kpi-trend ' + (avgTimeDaysNum <= 1.0 ? 'up' : avgTimeDaysNum <= 2.0 ? 'neutral' : 'down');
+        if (avgTimeDaysNum > 0) {
+            avgTrend.innerHTML = '<i class="fa-solid ' + (avgTimeDaysNum <= 1.0 ? 'fa-check' : avgTimeDaysNum <= 2.0 ? 'fa-minus' : 'fa-xmark') + '"></i> <span>Meta: 1.0d</span>';
         } else {
             avgTrend.innerHTML = '<i class="fa-solid fa-minus"></i> <span>--</span>';
         }
@@ -4643,6 +4693,9 @@ function createOrigemContatoChart() {
         },
         plugins: [ChartDataLabels]
     });
+
+    // Configurar hover para destacar legendas
+    window.setupDoughnutHover(charts.chartOrigemContato, 'legendOrigemContato');
 }
 
 function createBarChart(id, labels, data, type) {
@@ -4899,6 +4952,9 @@ function createDoughnutChart(id, dataObj, centerId, legendId, title) {
         },
         plugins: [ChartDataLabels]
     });
+
+    // Configurar hover para destacar legendas
+    window.setupDoughnutHover(charts[id], legendId);
 }
 
 function filterByGN(gn) {
@@ -4975,7 +5031,13 @@ function createLineChart(id, totalPoints, closedPoints) {
                 tooltip: {
                     callbacks: {
                         title: (items) => {
-                            return moment(items[0].label).format('ddd, DD/MM/YYYY');
+                            (() => {
+                                    const label = items[0].label;
+                                    let parsed = moment(label, 'YYYY-MM-DD');
+                                    if (!parsed.isValid()) parsed = moment(label, 'DD/MM');
+                                    if (!parsed.isValid()) parsed = moment(label);
+                                    return parsed.isValid() ? parsed.format('ddd, DD/MM/YYYY') : label;
+                                })();
                         },
                         label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`
                     }
@@ -4983,22 +5045,23 @@ function createLineChart(id, totalPoints, closedPoints) {
             },
             scales: {
                 x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        parser: 'YYYY-MM-DD',
-                        displayFormats: { day: 'DD/MM' },
-                        tooltipFormat: 'DD/MM/YYYY'
-                    },
-                    distribution: 'series',
-                    bounds: 'ticks',
-                    grid: { display: false },
-                    ticks: {
-                        maxRotation: 45,
-                        font: { size: 11 },
-                        autoSkip: true
-                    }
-                },
+                            type: 'category',
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                callback: function(value, index) {
+                                    const label = this.getLabelForValue(value);
+                                    const parsed = moment(label, 'YYYY-MM-DD');
+                                    return parsed.isValid() ? parsed.format('DD/MM') : label;
+                                },
+                                maxRotation: 45,
+                                minRotation: 0,
+                                font: { size: 11 },
+                                autoSkip: true,
+                                maxTicksLimit: 15
+                            }
+                        },
                 y: {
                     beginAtZero: true,
                     grid: { color: 'rgba(255, 255, 255, 0.05)' },
@@ -5108,7 +5171,8 @@ function createHorizontalBarChart(id, labels, data) {
                     grid: { display: false },
                     ticks: {
                         font: { size: 12 },
-                        autoSkip: false
+                        autoSkip: false,
+                        padding: 10 // Adiciona espaço entre o rótulo e o gráfico
                     }
                 }
             }
@@ -5193,7 +5257,7 @@ function renderTable() {
             <td style="${tempoCor}">${row.tempoResolucaoFormatado}</td>
             <td style="${fcrColor}">${row.fcr}</td>
             <td style="font-weight:600;color:var(--brand-blue)">${row.analista}</td>
-            <td class="truncated" title="${row.motivo}">${row.motivo}</td>
+            <td class="truncated" title="${normalizarMotivo(row.motivo)}">${normalizarMotivo(row.motivo)}</td>
             <td class="truncated" title="${row.sub}">${row.sub}</td>
             <td class="truncated" title="${row.solicitante}">${row.solicitante}</td>
             <td style="${tipoCor}">${row.tipoContato}</td>
@@ -5611,8 +5675,8 @@ function renderMotivoTable() {
         const valB = b[currentMotivoSort.key];
         
         if (currentMotivoSort.key === 'tmr') {
-            const numA = parseFloat(a.tmrHoras) || 0;
-            const numB = parseFloat(b.tmrHoras) || 0;
+            const numA = parseFloat(a.tmrDias) || 0;
+            const numB = parseFloat(b.tmrDias) || 0;
             return currentMotivoSort.direction === 'asc' ? numA - numB : numB - numA;
         } else if (currentMotivoSort.key === 'fcr') {
             const numA = parseFloat(a.fcrPercentual) || 0;
@@ -5638,8 +5702,8 @@ function renderMotivoTable() {
             : item.fcrPercentual >= 60 ? 'color:var(--brand-orange);' 
             : 'color:var(--error-red);';
             
-        const tmrColor = parseFloat(item.tmrHoras) > 48 ? 'color:var(--error-red);' 
-            : parseFloat(item.tmrHoras) > 24 ? 'color:var(--brand-orange);' 
+        const tmrColor = parseFloat(item.tmrDias) > 2.0 ? 'color:var(--error-red);' 
+            : parseFloat(item.tmrDias) > 1.0 ? 'color:var(--brand-orange);' 
             : 'color:var(--success-green);';
         
         tr.innerHTML = `
@@ -5648,7 +5712,7 @@ function renderMotivoTable() {
             <td><span class="status-pill" style="background:var(--gradient-warning)">${item.abertos}</span></td>
             <td><span class="status-pill" style="background:var(--gradient-success)">${item.fechados}</span></td>
             <td style="${fcrColor}; font-weight: 600;">${item.fcrPercentual}%</td>
-            <td style="${tmrColor}; font-weight: 600;">${item.tmrHoras}h</td>
+            <td style="${tmrColor}; font-weight: 600;">${item.tmrDias}d</td>
             <td>${item.analistasCount} analista(s)</td>
             <td class="truncated" title="${item.tiposContatoList}">${item.tiposContatoList}</td>
             <td>
@@ -5816,7 +5880,7 @@ function loadAnalistaMotivoData() {
         return {
             ...grupo,
             fcrPercentual: fcrPerc.toFixed(1),
-            tmrHoras: tmrHoras.toFixed(1),
+            tmrDias: (tmrHoras / 24).toFixed(1),
             motivosCount: grupo.motivos.size,
             origemPrincipal: origemPrincipal
         };
@@ -5834,7 +5898,7 @@ function loadAnalistaMotivoData() {
             <td>${item.abertos}</td>
             <td>${item.fechados}</td>
             <td>${item.fcrPercentual}%</td>
-            <td>${item.tmrHoras}h</td>
+            <td>${item.tmrDias}d</td>
             <td>${item.origemPrincipal}</td>
         `;
         tbody.appendChild(tr);
@@ -5931,8 +5995,8 @@ function loadTMRData() {
     if (!motivoAnalyticsData) return;
     
     const motivosComTMR = motivoAnalyticsData
-        .filter(item => parseFloat(item.tmrHoras) > 0)
-        .sort((a, b) => parseFloat(b.tmrHoras) - parseFloat(a.tmrHoras));
+        .filter(item => parseFloat(item.tmrDias) > 0)
+        .sort((a, b) => parseFloat(b.tmrDias) - parseFloat(a.tmrDias));
     
     const temposGeral = [];
     motivoAnalyticsData.forEach(item => {
@@ -5941,21 +6005,22 @@ function loadTMRData() {
         }
     });
     
-    const tmrGeral = temposGeral.length > 0 
-        ? (temposGeral.reduce((a, b) => a + b, 0) / temposGeral.length).toFixed(1)
+    const tmrGeralHoras = temposGeral.length > 0 
+        ? (temposGeral.reduce((a, b) => a + b, 0) / temposGeral.length)
         : 0;
+    const tmrGeralDias = (tmrGeralHoras / 24).toFixed(1);
     
-    $('tmrGeral').textContent = `${tmrGeral}h`;
+    $('tmrGeral').textContent = `${tmrGeralDias}d`;
     
     if (motivosComTMR.length > 0) {
         const maisRapido = motivosComTMR[motivosComTMR.length - 1];
         const maisLento = motivosComTMR[0];
         
         $('motivoMaisRapido').textContent = maisRapido.motivo;
-        $('tempoMaisRapido').textContent = `${maisRapido.tmrHoras}h (${maisRapido.tmrDias} dias)`;
+        $('tempoMaisRapido').textContent = `${maisRapido.tmrDias} dias`;
         
         $('motivoMaisLento').textContent = maisLento.motivo;
-        $('tempoMaisLento').textContent = `${maisLento.tmrHoras}h (${maisLento.tmrDias} dias)`;
+        $('tempoMaisLento').textContent = `${maisLento.tmrDias} dias`;
     }
     
     const ctx = $('chartTMRMotivo').getContext('2d');
@@ -5968,11 +6033,11 @@ function loadTMRData() {
         data: {
             labels: top15.map(d => d.motivo.length > 20 ? d.motivo.substring(0, 20) + '...' : d.motivo),
             datasets: [{
-                label: 'TMR (horas)',
-                data: top15.map(d => parseFloat(d.tmrHoras)),
+                label: 'TMR (dias)',
+                data: top15.map(d => parseFloat(d.tmrDias)),
                 backgroundColor: top15.map(d => 
-                    parseFloat(d.tmrHoras) > 48 ? MOTIVO_PALETTE[11] :
-                    parseFloat(d.tmrHoras) > 24 ? MOTIVO_PALETTE[9] :
+                    parseFloat(d.tmrDias) > 2.0 ? MOTIVO_PALETTE[11] :
+                    parseFloat(d.tmrDias) > 1.0 ? MOTIVO_PALETTE[9] :
                     MOTIVO_PALETTE[6]
                 ),
                 borderRadius: 4
@@ -5985,7 +6050,7 @@ function loadTMRData() {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: context => `TMR: ${context.parsed.y.toFixed(1)} horas`
+                        label: context => `TMR: ${context.parsed.y.toFixed(1)} dias`
                     }
                 },
                 datalabels: {
@@ -5996,7 +6061,7 @@ function loadTMRData() {
                     anchor: 'end',
                     align: 'top',
                     font: { weight: 'bold', size: 11 },
-                    formatter: (value) => value.toFixed(1) + 'h'
+                    formatter: (value) => value.toFixed(1) + 'd'
                 }
             }
         },
@@ -6008,17 +6073,17 @@ function loadTMRData() {
     
     motivosComTMR.forEach(item => {
         const casosLentos = item.temposResolucao.filter(t => t > 168).length;
-        const desvioPadrao = item.temposResolucao.length > 1 
-            ? Math.sqrt(item.temposResolucao.reduce((sq, n) => sq + Math.pow(n - parseFloat(item.tmrHoras), 2), 0) / item.temposResolucao.length).toFixed(1)
+        const desvioPadraoHoras = item.temposResolucao.length > 1 
+            ? Math.sqrt(item.temposResolucao.reduce((sq, n) => sq + Math.pow(n - parseFloat(item.tmrHoras), 2), 0) / item.temposResolucao.length)
             : 0;
+        const desvioPadraoDias = (desvioPadraoHoras / 24).toFixed(1);
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${item.motivo}</td>
             <td>${item.fechados}</td>
-            <td>${item.tmrHoras}</td>
             <td>${item.tmrDias}</td>
-            <td>${desvioPadrao}h</td>
+            <td>${desvioPadraoDias}d</td>
             <td>${casosLentos}</td>
         `;
         tbody.appendChild(tr);
@@ -6045,6 +6110,7 @@ function switchAutomationTab(tabName) {
     $(`tab-${tabName}`)?.classList.add('active');
     
     if (tabName === 'evolucao') {
+        
         updateEvolucaoChart();
     }
 }
@@ -6200,7 +6266,7 @@ function exportCSV() {
             row.tempoResolucaoFormatado,
             row.fcr,
             `"${row.analista}"`,
-            `"${row.motivo}"`,
+            `"${normalizarMotivo(row.motivo)}"`,
             `"${row.sub}"`,
             `"${row.solicitante}"`,
             row.tipoContato,
@@ -6264,6 +6330,387 @@ function updateLastUpdateTime() {
     LAST_UPDATE_TIME = new Date();
     $('lastUpdateTime').textContent = moment(LAST_UPDATE_TIME).format('DD/MM/YYYY HH:mm');
 }
-</script>
+
+    // =====================================================
+    // FUNÇÃO PARA GERAR RELATÓRIO EXECUTIVO
+    // =====================================================
+    function generateExecutiveReport() {
+        if (!FILTERED || FILTERED.length === 0) {
+            showToast('Carregue os dados primeiro antes de gerar o relatório.', 'warning');
+            return;
+        }
+
+        showToast('Gerando relatório executivo...', 'info');
+
+        // Coletar estatísticas
+        const total = FILTERED.length;
+        const abertos = FILTERED.filter(i => i.statusNorm === 'Aberto').length;
+        const fechados = FILTERED.filter(i => i.statusNorm === 'Fechado').length;
+        const fcrSim = FILTERED.filter(i => i.fcr === 'Sim').length;
+        const fcrPerc = fechados > 0 ? ((fcrSim / fechados) * 100).toFixed(1) : '0.0';
+
+        // Tempo médio de resolução
+        const casosComTempo = FILTERED.filter(i => i.statusNorm === 'Fechado' && i.tempoResolucaoDias !== null);
+        const tmrDias = casosComTempo.length > 0 
+            ? (casosComTempo.reduce((sum, i) => sum + i.tempoResolucaoDias, 0) / casosComTempo.length).toFixed(1)
+            : '0.0';
+
+        // CNPJs únicos
+        const cnpjsUnicos = new Set(FILTERED.filter(i => i.cnpj && i.cnpj.trim() !== '').map(i => i.cnpj)).size;
+
+        // Top 5 Motivos
+        const motivoCounts = {};
+        FILTERED.forEach(item => {
+            const motivo = item.motivo || 'Não informado';
+            motivoCounts[motivo] = (motivoCounts[motivo] || 0) + 1;
+        });
+        const topMotivos = Object.entries(motivoCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+        // Top 5 Analistas
+        const analistaCounts = {};
+        FILTERED.forEach(item => {
+            const analista = item.analista || 'Não Atribuído';
+            analistaCounts[analista] = (analistaCounts[analista] || 0) + 1;
+        });
+        const topAnalistas = Object.entries(analistaCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+        // Distribuição por Origem de Contato
+        const origemCounts = {};
+        FILTERED.forEach(item => {
+            const origem = item.origemContato || 'Não Informado';
+            origemCounts[origem] = (origemCounts[origem] || 0) + 1;
+        });
+
+        // Distribuição por Tipo de Atendimento
+        const tipoCounts = {};
+        FILTERED.forEach(item => {
+            const tipo = item.tipoContato || 'Não Informado';
+            tipoCounts[tipo] = (tipoCounts[tipo] || 0) + 1;
+        });
+
+        // Período dos dados
+        const datas = FILTERED.filter(i => i.dtStart).map(i => i.dtStart);
+        const dataMin = datas.length > 0 ? moment(Math.min(...datas)).format('DD/MM/YYYY') : '--';
+        const dataMax = datas.length > 0 ? moment(Math.max(...datas)).format('DD/MM/YYYY') : '--';
+
+        // Gerar HTML do relatório
+        const reportHTML = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Relatório Executivo - Torre Mapeamento de Contatos</title>
+                <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body {
+                        font-family: 'Inter', sans-serif;
+                        background: linear-gradient(135deg, #f8faff 0%, #e8f0ff 100%);
+                        color: #1a1b2e;
+                        line-height: 1.6;
+                        padding: 40px;
+                    }
+                    .report-container {
+                        max-width: 900px;
+                        margin: 0 auto;
+                        background: white;
+                        border-radius: 20px;
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .report-header {
+                        background: linear-gradient(135deg, #0045B5 0%, #0068FF 100%);
+                        color: white;
+                        padding: 40px;
+                        text-align: center;
+                    }
+                    .report-header h1 {
+                        font-family: 'Montserrat', sans-serif;
+                        font-size: 28px;
+                        font-weight: 800;
+                        margin-bottom: 10px;
+                    }
+                    .report-header p {
+                        opacity: 0.9;
+                        font-size: 14px;
+                    }
+                    .report-content { padding: 40px; }
+                    .section {
+                        margin-bottom: 30px;
+                        padding-bottom: 30px;
+                        border-bottom: 1px solid #e8e9ee;
+                    }
+                    .section:last-child { border-bottom: none; }
+                    .section-title {
+                        font-family: 'Montserrat', sans-serif;
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: #0045B5;
+                        margin-bottom: 20px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .section-title::before {
+                        content: '';
+                        width: 4px;
+                        height: 24px;
+                        background: linear-gradient(180deg, #0045B5, #FFD100);
+                        border-radius: 2px;
+                    }
+                    .kpi-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                        gap: 20px;
+                    }
+                    .kpi-card {
+                        background: linear-gradient(135deg, #f8faff 0%, #fff 100%);
+                        border: 1px solid #e8e9ee;
+                        border-radius: 12px;
+                        padding: 20px;
+                        text-align: center;
+                    }
+                    .kpi-value {
+                        font-family: 'Montserrat', sans-serif;
+                        font-size: 32px;
+                        font-weight: 800;
+                        color: #0045B5;
+                        line-height: 1;
+                    }
+                    .kpi-label {
+                        font-size: 12px;
+                        color: #5a5d72;
+                        margin-top: 8px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .list-item {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 12px 16px;
+                        background: #f8faff;
+                        border-radius: 8px;
+                        margin-bottom: 8px;
+                    }
+                    .list-item:last-child { margin-bottom: 0; }
+                    .list-name { font-weight: 600; color: #1a1b2e; }
+                    .list-value {
+                        font-weight: 700;
+                        color: #0045B5;
+                        background: rgba(0,69,181,0.1);
+                        padding: 4px 12px;
+                        border-radius: 20px;
+                        font-size: 13px;
+                    }
+                    .report-footer {
+                        background: #f8faff;
+                        padding: 20px 40px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #5a5d72;
+                        border-top: 1px solid #e8e9ee;
+                    }
+                    .print-btn {
+                        background: linear-gradient(135deg, #0045B5, #0068FF);
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        margin-top: 20px;
+                        font-size: 14px;
+                    }
+                    .print-btn:hover { opacity: 0.9; }
+                    @media print {
+                        body { padding: 0; background: white; }
+                        .report-container { box-shadow: none; }
+                        .print-btn { display: none; }
+                    }
+                
+/* === HOVER EFFECT PARA LEGENDAS DAS ROSCAS === */
+.legend-item-highlight {
+    background: linear-gradient(135deg, rgba(61, 141, 255, 0.35) 0%, rgba(61, 141, 255, 0.2) 100%) !important;
+    transform: translateX(5px) scale(1.03);
+    box-shadow: 0 0 15px rgba(61, 141, 255, 0.5), inset 0 0 10px rgba(61, 141, 255, 0.1);
+    border-left: 3px solid var(--brand-blue) !important;
+    border-radius: 8px !important;
+}
+
+.legend-item {
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-left: 3px solid transparent;
+}
+
+</style>
+            </head>
+            <body>
+                <div class="report-container">
+                    <div class="report-header">
+                        <h1>📊 Relatório Executivo</h1>
+                        <p>Torre Mapeamento de Contatos • Período: ${dataMin} a ${dataMax}</p>
+                        <p>Gerado em: ${moment().format('DD/MM/YYYY [às] HH:mm')}</p>
+                    </div>
+                    <div class="report-content">
+                        <div class="section">
+                            <div class="section-title">Indicadores Principais</div>
+                            <div class="kpi-grid">
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${total}</div>
+                                    <div class="kpi-label">Total Registros</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${abertos}</div>
+                                    <div class="kpi-label">Em Aberto</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${fechados}</div>
+                                    <div class="kpi-label">Concluídos</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${fcrPerc}%</div>
+                                    <div class="kpi-label">FCR</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${tmrDias}d</div>
+                                    <div class="kpi-label">TMR (dias)</div>
+                                </div>
+                                <div class="kpi-card">
+                                    <div class="kpi-value">${cnpjsUnicos}</div>
+                                    <div class="kpi-label">CNPJs Únicos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">Top 5 Motivos</div>
+                            ${topMotivos.map(([motivo, count], idx) => `
+                                <div class="list-item">
+                                    <span class="list-name">${idx + 1}. ${motivo}</span>
+                                    <span class="list-value">${count} (${((count/total)*100).toFixed(1)}%)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">Top 5 Analistas</div>
+                            ${topAnalistas.map(([analista, count], idx) => `
+                                <div class="list-item">
+                                    <span class="list-name">${idx + 1}. ${analista}</span>
+                                    <span class="list-value">${count} atendimentos</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">Distribuição por Canal</div>
+                            ${Object.entries(origemCounts).sort((a,b) => b[1] - a[1]).map(([origem, count]) => `
+                                <div class="list-item">
+                                    <span class="list-name">${origem}</span>
+                                    <span class="list-value">${count} (${((count/total)*100).toFixed(1)}%)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">Tipo de Atendimento</div>
+                            ${Object.entries(tipoCounts).sort((a,b) => b[1] - a[1]).map(([tipo, count]) => `
+                                <div class="list-item">
+                                    <span class="list-name">${tipo}</span>
+                                    <span class="list-value">${count} (${((count/total)*100).toFixed(1)}%)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>
+                        </div>
+                    </div>
+                    <div class="report-footer">
+                        Dashboard desenvolvido por <strong>Thiago Jr</strong> • Consolidação Torre Mapeamento de Contatos
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Abrir em nova janela
+        const reportWindow = window.open('', '_blank', 'width=1000,height=800');
+        if (reportWindow) {
+            reportWindow.document.write(reportHTML);
+            reportWindow.document.close();
+            showToast('Relatório gerado com sucesso!', 'success');
+        } else {
+            showToast('Popup bloqueado! Permita popups para este site.', 'error');
+        }
+    }
+
+
+// ============ DEMANDA INTERNA ============
+let demandaInternaData = [];
+let demandaInternaLoaded = false;
+
+async function loadDemandaInterna() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/thiccoipp/Ipp/main/internas.xlsx');
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        demandaInternaData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+        demandaInternaLoaded = true;
+        console.log('Demandas internas carregadas:', demandaInternaData.length);
+        updateDemandaInternaCount();
+    } catch (error) {
+        console.error('Erro ao carregar demandas internas:', error);
+        $('demandaInternaCount').innerText = '--';
+    }
+}
+
+function updateDemandaInternaCount() {
+    if (!demandaInternaLoaded) return;
+
+    // Pegar datas do período atual do dashboard (se filtro existir)
+    let count = demandaInternaData.length;
+
+    // Se tiver filtro de período no dashboard, aplicar também às demandas internas
+    if (typeof getDateRangeFilter === 'function') {
+        const dateRange = getDateRangeFilter();
+        if (dateRange && dateRange.start && dateRange.end) {
+            count = demandaInternaData.filter(item => {
+                let dataInicio = item['Data de início'] || item['Data de inicio'] || item['DataInicio'];
+                if (!dataInicio) return true; // Incluir se não tiver data
+
+                let itemDate;
+                if (typeof dataInicio === 'number') {
+                    itemDate = new Date((dataInicio - 25569) * 86400 * 1000);
+                } else {
+                    const parts = String(dataInicio).split(' ')[0].split('/');
+                    if (parts.length === 3) {
+                        let year = parseInt(parts[2]);
+                        if (year < 100) year += 2000;
+                        itemDate = new Date(year, parseInt(parts[0]) - 1, parseInt(parts[1]));
+                    }
+                }
+
+                if (!itemDate || isNaN(itemDate)) return true;
+                return itemDate >= dateRange.start && itemDate <= dateRange.end;
+            }).length;
+        }
+    }
+
+    $('demandaInternaCount').innerText = count;
+}
+
+// Carregar demandas internas após carregamento inicial
+setTimeout(loadDemandaInterna, 1000);
+
+        </script>
 </body>
 </html>
